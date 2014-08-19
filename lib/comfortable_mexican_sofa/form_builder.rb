@@ -29,7 +29,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     end
     content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
 
-    form_group :label => {:text => label} do 
+    form_group :label => {:text => label} do
       content.html_safe
     end
   end
@@ -59,10 +59,23 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     content = @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][content]", '', :id => nil)
     content << @template.check_box_tag("#{fieldname}[blocks_attributes][#{index}][content]", '1', tag.content.present?, :id => nil)
     content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
-    form_group :label => {:text => tag.identifier.titleize + "?"} do 
+    form_group :label => {:text => tag.identifier.titleize + "?"} do
       content
     end
   end
+
+  def page_carousel tag, index
+    render_editor 'widget/carousel/editor', tag, index
+  end
+
+  def page_scroller tag, index
+    render_editor 'widget/scroller/editor', tag, index
+  end
+
+  def page_banner tag, index
+    render_editor 'widget/banner/editor', tag, index
+  end
+
 
   def page_date_time(tag, index)
     default_tag_field(tag, index, :text_field_tag, :data => {'cms-datetime' => true})
@@ -99,8 +112,8 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
   def collection(tag, index)
     options = [["---- Select #{tag.collection_class.titleize} ----", nil]] +
       tag.collection_objects.collect do |m|
-        [m.send(tag.collection_title), m.send(tag.collection_identifier)]
-      end
+      [m.send(tag.collection_title), m.send(tag.collection_identifier)]
+    end
 
     fieldname = field_name_for(tag)
     content = @template.select_tag(
@@ -114,4 +127,20 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     end
   end
 
+  private
+
+  def render_editor partial, tag, index
+    fieldname = field_name_for(tag)
+    identifier = tag.identifier.to_s
+    label  = tag.blockable.class.human_attribute_name(tag.identifier.to_s)
+    content_field_name = "#{fieldname}[blocks_attributes][#{index}][content]"
+    content = ''
+
+    content << @template.render(partial: partial, locals: { content_field_name: content_field_name, value: tag.content })
+    content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
+
+    form_group label: { text: label } do
+      content.html_safe
+    end
+  end
 end

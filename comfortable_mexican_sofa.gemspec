@@ -12,13 +12,13 @@ Gem::Specification.new do |s|
   s.summary       = "Rails 4 CMS Engine"
   s.description   = "ComfortableMexicanSofa is a powerful Rails 4 CMS Engine"
   s.license       = 'MIT'
-  
+
   s.files         = `git ls-files`.split("\n")
   s.platform      = Gem::Platform::RUBY
   s.require_paths = ['lib']
-  
+
   s.required_ruby_version = '>= 1.9.3'
-  
+
   s.add_dependency 'rails',             '>= 4.0.0'
   s.add_dependency 'rails-i18n',        '~> 4.0.0'
   s.add_dependency 'bootstrap_form',    '~> 2.1.1'
@@ -26,7 +26,7 @@ Gem::Specification.new do |s|
   s.add_dependency 'paperclip',         '>= 4.0.0'
   s.add_dependency 'kramdown',          '>= 1.0.0'
   s.add_dependency 'jquery-rails',      '>= 3.0.0'
-  s.add_dependency 'jquery-ui-rails',   '>= 4.0.0'
+  s.add_dependency 'jquery-ui-rails',   '~> 4.2.0'
   s.add_dependency 'haml-rails',        '>= 0.3.0'
   s.add_dependency 'sass-rails',        '>= 4.0.3'
   s.add_dependency 'coffee-rails',      '>= 3.1.0'
