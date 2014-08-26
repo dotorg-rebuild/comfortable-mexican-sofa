@@ -1,0 +1,14 @@
+pairs:
+  db: David Bellotti;dbellotti
+  em: Ehren Murdick;emurdick
+  jj: John Jennings;john_jennings_at_sundance.org
+  jr: John Ryan;jryan
+  ly: Liam Yafuso
+  ml: Mariana Lenetis;mlenetis
+  pa: Peter Alfvin;palfvin
+
+email:
+  prefix: pair
+  domain: pivotal.io
+
+global: true
