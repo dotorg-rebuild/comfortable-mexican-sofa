@@ -1,22 +1,25 @@
 class Comfy::Cms::Site < ActiveRecord::Base
   self.table_name = 'comfy_cms_sites'
-  
+
   # -- Relationships --------------------------------------------------------
   with_options :dependent => :destroy do |site|
     site.has_many :layouts
     site.has_many :pages
     site.has_many :snippets
-    site.has_many :files
     site.has_many :categories
   end
-  
+
+  has_many :files,
+    ->{ where('comfy_cms_files.attachable_id' => nil, 'comfy_cms_files.attachable_type' => nil) },
+    :dependent => :destroy
+
   # -- Callbacks ------------------------------------------------------------
   before_validation :assign_identifier,
                     :assign_hostname,
                     :assign_label
   before_save :clean_path
   after_save  :sync_mirrors
-  
+
   # -- Validations ----------------------------------------------------------
   validates :identifier,
     :presence   => true,
@@ -28,10 +31,10 @@ class Comfy::Cms::Site < ActiveRecord::Base
     :presence   => true,
     :uniqueness => { :scope => :path },
     :format     => { :with => /\A[\w\.\-]+(?:\:\d+)?\z/ }
-    
+
   # -- Scopes ---------------------------------------------------------------
   scope :mirrored, -> { where(:is_mirrored => true) }
-  
+
   # -- Class Methods --------------------------------------------------------
   # returning the Comfy::Cms::Site instance based on host and path
   def self.find_site(host, path = nil)
@@ -70,31 +73,31 @@ protected
   def assign_identifier
     self.identifier = self.identifier.blank?? self.hostname.try(:slugify) : self.identifier
   end
-  
+
   def assign_hostname
     self.hostname ||= self.identifier
   end
-  
+
   def assign_label
     self.label = self.label.blank?? self.identifier.try(:titleize) : self.label
   end
-  
+
   def clean_path
     self.path ||= ''
     self.path.squeeze!('/')
     self.path.gsub!(/\/$/, '')
   end
-  
+
   # When site is marked as a mirror we need to sync its structure
   # with other mirrors.
   def sync_mirrors
     return unless is_mirrored_changed? && is_mirrored?
-    
+
     [self, Comfy::Cms::Site.mirrored.where("id != #{id}").first].compact.each do |site|
       (site.layouts(:reload).roots + site.layouts.roots.map(&:descendants)).flatten.map(&:sync_mirror)
       (site.pages(:reload).roots + site.pages.roots.map(&:descendants)).flatten.map(&:sync_mirror)
       site.snippets(:reload).map(&:sync_mirror)
     end
   end
-  
+
 end
