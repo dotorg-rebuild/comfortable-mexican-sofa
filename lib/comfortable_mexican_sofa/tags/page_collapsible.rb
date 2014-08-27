@@ -7,7 +7,11 @@ class ComfortableMexicanSofa::Tag::PageCollapsible
   end
 
   def content
-    block.content
+    block.content || default_fields.to_json
+  end
+
+  def default_fields
+    @default_fields || { header: '', summary: '', description: '' }
   end
 
   def render
