@@ -80,6 +80,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     render_editor tag.edit_path, tag, index
   end
 
+  def page_accordion tag, index
+    render_editor tag.edit_path, tag, index
+  end
+
   def page_date_time(tag, index)
     default_tag_field(tag, index, :text_field_tag, :data => {'cms-datetime' => true})
   end
