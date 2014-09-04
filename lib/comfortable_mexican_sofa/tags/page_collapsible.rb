@@ -20,6 +20,8 @@ class ComfortableMexicanSofa::Tag::PageCollapsible
 
   def json
     JSON.parse(content)
+  rescue JSON::ParserError
+    default_fields
   end
 
   def edit_path
