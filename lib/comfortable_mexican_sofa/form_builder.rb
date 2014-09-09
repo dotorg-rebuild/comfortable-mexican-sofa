@@ -64,6 +64,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     end
   end
 
+  def page_breadcrumbs tag, index
+    # no editing experience
+  end
+
   def page_carousel tag, index
     render_editor 'widget/carousel/editor', tag, index
   end
