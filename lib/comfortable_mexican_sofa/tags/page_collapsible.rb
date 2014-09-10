@@ -1,5 +1,6 @@
 class ComfortableMexicanSofa::Tag::PageCollapsible
   include ComfortableMexicanSofa::Tag
+  DEFAULT_FIELDS = { header: '', summary: '', description: '' }.stringify_keys
 
   def self.regex_tag_signature(identifier = nil)
     identifier ||= IDENTIFIER_REGEX
@@ -7,21 +8,22 @@ class ComfortableMexicanSofa::Tag::PageCollapsible
   end
 
   def content
-    block.content || default_fields.to_json
+    if json_is_valid
+      block.content
+    else
+      DEFAULT_FIELDS.to_json
+    end
   end
 
-  def default_fields
-    @default_fields || { header: '', summary: '', description: '' }
+  def json_is_valid
+    DEFAULT_FIELDS.keys.all? do |key|
+      json.has_key?(key)
+    end
   end
 
   def render
+    return '' unless json_is_valid
     template.render(Object.new, json)
-  end
-
-  def json
-    JSON.parse(content)
-  rescue JSON::ParserError
-    default_fields
   end
 
   def edit_path
@@ -30,6 +32,13 @@ class ComfortableMexicanSofa::Tag::PageCollapsible
 
   def show_path
     Rails.root.join("app/views/#{self.class.to_s.underscore}/_show.html.haml")
+  end
+
+  private
+  def json
+    JSON.parse(block.content)
+  rescue JSON::ParserError
+    {}
   end
 
   def template

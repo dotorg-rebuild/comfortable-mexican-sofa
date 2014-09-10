@@ -59,6 +59,10 @@ class Comfy::Cms::Site < ActiveRecord::Base
     super
   end
 
+  def global_files
+    files.not_attached.not_page_file.order(:label)
+  end
+
 protected
 
   def self.real_host_from_aliases(host)
