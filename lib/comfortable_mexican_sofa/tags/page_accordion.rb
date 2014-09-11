@@ -40,7 +40,7 @@ class ComfortableMexicanSofa::Tag::PageAccordion
 
   def json
     JSON.parse(block.content)
-  rescue JSON::ParserError
+  rescue JSON::ParserError, TypeError
     {}
   end
 
