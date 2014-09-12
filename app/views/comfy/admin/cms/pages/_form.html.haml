@@ -14,10 +14,15 @@
   = form.text_field :slug, :data => {:slug => true}
   - unless @page.new_record?
     = form.text_field :full_path, :id => 'full-path', :disabled => true
+    .form-group
+      %label.control-label.col-sm-2{:for => "page_secret_url"} Secret Url
+      .col-sm-10
+        = link_to @page.secret_url, @page.secret_url, :id => 'secret-url', :disabled => true
+
 
 - if (options = ::Comfy::Cms::Layout.options_for_select(@site)).present?
   = form.select :layout_id, options, {}, 'data-url' => form_blocks_comfy_admin_cms_site_page_path(@site, @page.id.to_i)
-  
+
 - if (options = ::Comfy::Cms::Page.options_for_select(@site, @page)).present?
   = form.select :parent_id, options
 
