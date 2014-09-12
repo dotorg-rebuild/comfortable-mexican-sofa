@@ -1,6 +1,8 @@
 # encoding: utf-8
 
 class Comfy::Cms::Page < ActiveRecord::Base
+  SECRET_COLUMN = 'full_path'
+
   self.table_name = 'comfy_cms_pages'
 
   cms_acts_as_tree :counter_cache => :children_count
@@ -55,6 +57,18 @@ class Comfy::Cms::Page < ActiveRecord::Base
     return out.compact
   end
 
+  def self.find_by_secret thing
+    thing = sanitize(thing)
+    result = Comfy::Cms::Page.find_by_sql(<<-END
+      SELECT *
+        FROM #{table_name}
+       WHERE MD5(#{table_name}.#{SECRET_COLUMN}) = #{thing}
+    END
+                                         ).first
+    raise ActiveRecord::RecordNotFound unless result
+    result
+  end
+
   # -- Instance Methods -----------------------------------------------------
   # For previewing purposes sometimes we need to have full_path set. This
   # full path take care of the pages and its childs but not of the site path
@@ -70,6 +84,18 @@ class Comfy::Cms::Page < ActiveRecord::Base
   # Full url for a page
   def url
     "//" + "#{self.site.hostname}/#{self.site.path}/#{self.full_path}".squeeze("/")
+  end
+
+  def secret_secret
+    Digest::MD5.hexdigest(self[SECRET_COLUMN].to_s)
+  end
+
+  def secret_url
+    "//" + "#{self.site.hostname}/#{secret_path}".squeeze("/")
+  end
+
+  def secret_path
+    "/secret/#{secret_secret}"
   end
 
 protected

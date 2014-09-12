@@ -23,6 +23,11 @@ class Comfy::Cms::ContentController < Comfy::Cms::BaseController
     end
   end
 
+  def secret
+    @cms_page = Comfy::Cms::Page.find_by_secret(params[:secret])
+    show
+  end
+
   def render_sitemap
     render
   end
@@ -42,10 +47,10 @@ protected
     return unless ComfortableMexicanSofa.config.enable_fixtures
     ComfortableMexicanSofa::Fixture::Importer.new(@cms_site.identifier).import!
   end
-  
+
   def load_cms_page
     @cms_page = @cms_site.pages.published.find_by_full_path!("/#{params[:cms_path]}")
-  end    
+  end
 
   def page_not_found
     @cms_page = @cms_site.pages.published.find_by_full_path!('/404')
