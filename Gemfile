@@ -15,4 +15,10 @@ group :test do
   gem 'activerecord-jdbcsqlite3-adapter', :platform => :jruby
   gem 'mocha',      :require => false
   gem 'coveralls',  :require => false
+
+  gem 'rspec'
+  gem 'rspec-rails'
+  gem 'factory_girl_rails', '~> 4.0'
+  gem 'ffaker'
+  gem 'timecop'
 end
