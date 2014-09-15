@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gemspec
+gem 'rails', '4.1.1'
 
 group :development do
   gem 'awesome_print'
@@ -15,4 +16,11 @@ group :test do
   gem 'activerecord-jdbcsqlite3-adapter', :platform => :jruby
   gem 'mocha',      :require => false
   gem 'coveralls',  :require => false
+
+  gem 'rspec'
+  gem 'rspec-rails'
+  gem 'factory_girl_rails', '~> 4.0'
+  gem 'ffaker'
+  gem 'timecop'
+  gem 'pry'
 end
