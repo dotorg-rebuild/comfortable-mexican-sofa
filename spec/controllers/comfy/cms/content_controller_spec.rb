@@ -7,7 +7,7 @@ describe Comfy::Cms::ContentController, type: :controller do
     }) }
 
     let(:layout) { object_double(Comfy::Cms::Layout.new, {
-      app_layout: 'application'
+      app_layout: 'comfy/admin/cms'
     })}
 
     let(:site) { object_double(Comfy::Cms::Site.new, {
@@ -19,7 +19,8 @@ describe Comfy::Cms::ContentController, type: :controller do
       secret_secret: 'secret',
       layout: layout,
       content_cache: 'content_cache',
-      target_page: nil
+      target_page: nil,
+      render: ''
     })}
 
     subject { response }
@@ -30,7 +31,7 @@ describe Comfy::Cms::ContentController, type: :controller do
       allow(controller).to receive(:load_cms_site)
       controller.instance_variable_set '@cms_site', site
 
-      allow(site).to receive_message_chain(:pages, :find_by_full_path!).and_return(page)
+      allow(site).to receive_message_chain(:pages, :find_by_full_path).and_return(page)
 
       get :secret, secret: page.secret_secret, site_id: site.id
     end

@@ -30,3 +30,13 @@ Rake::Task[:test].enhance do
   Rake::Task['test:lib'].invoke
   Rake::Task['test:generators'].invoke
 end
+
+Rake::Task["default"].clear if Rake::Task.task_defined?("default")
+task :default do
+  puts "Starting specs"
+  system('bundle exec rspec')
+
+  puts "Starting Minitest tests"
+  system('bundle exec rake test')
+end
+

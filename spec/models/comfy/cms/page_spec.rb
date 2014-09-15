@@ -5,8 +5,16 @@ describe Comfy::Cms::Page do
     let(:page) { create :page }
     subject { Comfy::Cms::Page.find_by_secret(page.secret_secret) }
     before do
-      expect(Comfy::Cms::Page).to receive(:find_by_sql)
+      expect(Comfy::Cms::Page).
+        to receive(:find_by_sql).
+        with("SELECT *\n        FROM comfy_cms_pages\n       WHERE MD5(comfy_cms_pages.full_path) = '#{page.secret_secret}'").
+        and_return([page])
     end
+
+    after do
+      page.destroy
+    end
+
     it { is_expected.to eq page }
   end
 

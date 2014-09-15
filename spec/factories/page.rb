@@ -14,7 +14,6 @@ FactoryGirl.define do
         content:    '<header></header><div>{{ cms:page:content:string }}</div><footer></footer>'
       )
     end
-    parent       nil
     is_published true
     sequence(:label) { |x| "page-#{x}" }
     slug { label }

@@ -1,6 +1,7 @@
 source 'http://rubygems.org'
 
 gemspec
+gem 'rails', '4.1.1'
 
 group :development do
   gem 'awesome_print'
@@ -21,4 +22,5 @@ group :test do
   gem 'factory_girl_rails', '~> 4.0'
   gem 'ffaker'
   gem 'timecop'
+  gem 'pry'
 end

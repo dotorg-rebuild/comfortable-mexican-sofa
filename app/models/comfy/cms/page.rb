@@ -59,12 +59,12 @@ class Comfy::Cms::Page < ActiveRecord::Base
 
   def self.find_by_secret thing
     thing = sanitize(thing)
-    result = Comfy::Cms::Page.find_by_sql(<<-END
+    secret_sql = <<-END
       SELECT *
         FROM #{table_name}
        WHERE MD5(#{table_name}.#{SECRET_COLUMN}) = #{thing}
     END
-                                         ).first
+    result = Comfy::Cms::Page.find_by_sql(secret_sql.strip).first
     raise ActiveRecord::RecordNotFound unless result
     result
   end
