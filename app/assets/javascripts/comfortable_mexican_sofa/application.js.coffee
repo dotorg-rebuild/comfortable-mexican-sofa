@@ -19,7 +19,7 @@ $ ->
 window.CMS =
   current_path:           window.location.pathname
   code_mirror_instances:  []
-  
+
   init: ->
     CMS.slugify()
     CMS.wysiwyg()
@@ -46,19 +46,44 @@ window.CMS.slugify = ->
     str = str.replace(chars_to_replace_with_delimiter, '-')
     chars_to_remove = new RegExp('[^a-zA-Z0-9 -]', 'g')
     str = str.replace(chars_to_remove, '').replace(/\s+/g, '-').toLowerCase()
-    
+
   $('input[data-slugify=true]').bind 'keyup.cms', ->
     $('input[data-slug=true]').val(slugify($(this).val()))
 
 
+window.CMS.tinymce_opts =
+  selector:       'textarea[data-cms-rich-text]'
+  plugins:        ['link', 'image', 'code']
+  toolbar:        'undo redo | styleselect | bullist numlist | link unlink | image mybutton | code | '
+  menubar:        false
+  relative_urls:  false
+  content_css :   "/assets/tinymce.css"
+  setup: (editor) ->
+    editor.addButton 'mybutton',
+      type: 'menubutton'
+      text: 'Insert Image'
+      icon: false
+      menu: [
+        {
+          text: 'Full Width',
+          onclick: -> editor.insertContent('<figure class="full-bleed"><img src="http://placehold.it/1088x500"></figure>')
+        },
+        {
+          text: 'Float Left',
+          onclick: -> editor.insertContent('<figure class="inline-left"><img src="http://placehold.it/250x250"><figcaption>Hokey pokey (the left one in)</figcaption></figure>')
+        },
+        {
+          text: 'Float Right',
+          onclick: -> editor.insertContent('<figure class="inline-right"> <img src="http://placehold.it/250x250"> <figcaption>Hokey pokey (the right one in)</figcaption> </figure>')
+        },
+        {
+          text: 'Center',
+          onclick: -> editor.insertContent('<figure class="inline-center"> <img src="http://placehold.it/1088x500"> <figcaption>Hokey pokey (turn yourself around)</figcaption> </figure>')
+        },
+      ]
+
 window.CMS.wysiwyg = ->
-  tinymce.init
-    selector:       'textarea[data-cms-rich-text]'
-    plugins:        ['link', 'image', 'code']
-    toolbar:        'undo redo | styleselect | bullist numlist | link unlink image | code'
-    menubar:        false
-    statusbar:      false
-    relative_urls:  false
+  tinymce.init window.CMS.tinymce_opts
 
 window.CMS.codemirror = ->
   $('textarea[data-cms-cm-mode]').each (i, element) ->
@@ -68,7 +93,7 @@ window.CMS.codemirror = ->
       autoCloseTags:  true
       lineNumbers:    true
     CMS.code_mirror_instances.push(cm)
-  
+
   $('a[data-toggle="tab"]').on 'shown', ->
     for cm in CMS.code_mirror_instances
       cm.refresh()
@@ -120,7 +145,7 @@ window.CMS.page_update_publish = ->
   widget = $('#form-save')
   $('input', widget).prop('checked', $('input#page_is_published').is(':checked'))
   $('button', widget).html($('input[name=commit]').val())
-  
+
   $('input', widget).click ->
     $('input#page_is_published').prop('checked', $(this).is(':checked'))
   $('input#page_is_published').click ->
@@ -141,11 +166,11 @@ window.CMS.categories = ->
 window.CMS.uploader = ->
   form    = $('.file-uploader form')
   iframe  = $('iframe#file-upload-frame')
-  
+
   $('input[type=file]', form).change -> form.submit()
-    
+
   iframe.load -> upload_loaded()
-  
+
   upload_loaded = ->
     i = iframe[0]
     d = if i.contentDocument
@@ -154,7 +179,7 @@ window.CMS.uploader = ->
       i.contentWindow.document
     else
       i.document
-    
+
     if d.body.innerHTML
       raw_string  = d.body.innerHTML
       json_string = raw_string.match(/\{(.|\n)*\}/)[0]
