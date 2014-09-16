@@ -116,6 +116,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     default_tag_field(tag, index, :file_field_tag, :multiple => true)
   end
 
+  def field_files(tag, index)
+    default_tag_field(tag, index, :file_field_tag, :multiple => true)
+  end
+
   def page_markdown(tag, index)
     default_tag_field(tag, index, :text_area_tag, :data => {'cms-cm-mode' => 'text/x-markdown'})
   end
