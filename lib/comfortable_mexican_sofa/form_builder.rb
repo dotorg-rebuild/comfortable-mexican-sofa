@@ -21,6 +21,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
         name << '[]'
       end
 
+      if coach = options.delete(:coach)
+        label << " (#{coach})"
+      end
+
       content << @template.send(method, name, input_params)
       content << @template.render(:partial => 'comfy/admin/cms/files/page_form', :object => tag.block)
     else
@@ -109,7 +113,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
   end
 
   def page_file(tag, index)
-    default_tag_field(tag, index, :file_field_tag)
+    default_tag_field(tag, index, :file_field_tag, coach: tag.coach_tip)
   end
 
   def page_files(tag, index)
