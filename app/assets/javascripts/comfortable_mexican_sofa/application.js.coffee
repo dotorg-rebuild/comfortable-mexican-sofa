@@ -52,12 +52,13 @@ window.CMS.slugify = ->
 
 
 window.CMS.tinymce_opts =
-  selector:       'textarea[data-cms-rich-text]'
-  plugins:        ['link', 'image', 'code']
-  toolbar:        'undo redo | styleselect | bullist numlist | link unlink | image mybutton | code | '
-  menubar:        false
-  relative_urls:  false
-  content_css :   "/assets/tinymce.css"
+  selector       : 'textarea[data-cms-rich-text]'
+  plugins        : ['link', 'image', 'code']
+  toolbar        : 'undo redo | styleselect | bullist numlist | link unlink | image mybutton | code | '
+  menubar        : false
+  relative_urls  : false
+  content_css    : '/assets/tinymce.css'
+  valid_children : '+body[style]'
   setup: (editor) ->
     editor.addButton 'mybutton',
       type: 'menubutton'
