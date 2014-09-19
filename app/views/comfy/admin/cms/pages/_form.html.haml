@@ -13,7 +13,11 @@
 - unless @site.pages.count == 0 || @site.pages.root == @page
   = form.text_field :slug, :data => {:slug => true}
   - unless @page.new_record?
-    = form.text_field :full_path, :id => 'full-path', :disabled => true
+    .form-group
+      %label.control-label.col-sm-2{:for => "public_url"} Public URL
+      .col-sm-10
+        = link_to @page.url, @page.url, :id => 'public_url'
+
     .form-group
       %label.control-label.col-sm-2{:for => "page_secret_url"} Secret Url
       .col-sm-10
