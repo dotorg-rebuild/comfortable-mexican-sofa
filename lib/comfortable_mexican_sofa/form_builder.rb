@@ -120,6 +120,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     default_tag_field(tag, index, :file_field_tag, :multiple => true)
   end
 
+  def field_file(tag, index)
+    default_tag_field(tag, index, :file_field_tag)
+  end
+
   def field_files(tag, index)
     default_tag_field(tag, index, :file_field_tag, :multiple => true)
   end
