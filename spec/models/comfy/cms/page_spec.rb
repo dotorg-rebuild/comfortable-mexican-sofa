@@ -58,7 +58,6 @@ describe Comfy::Cms::Page do
     it { is_expected.to eq '//localhost/secret/d41d8cd98f00b204e9800998ecf8427e' }
   end
 
-
   describe '#is_published?' do
     let(:datetime) { nil }
     let(:page) { build :page, publish_at: datetime }
@@ -126,7 +125,17 @@ describe Comfy::Cms::Page do
       it 'returns a list comma-separated list of names' do
         expect(page.refers_to).to eq 'Tom Hanks, Tom Selek'
       end
+    end
+  end
 
+  describe 'polymorphic pageable' do
+    let(:site) { build :site }
+    let(:page) { build :page, site: site }
+
+    it do
+      page.pageable = site
+      expect(page.pageable_type).to eq 'Comfy::Cms::Site'
+      expect(page.pageable_id).to eq site.id
     end
   end
 end

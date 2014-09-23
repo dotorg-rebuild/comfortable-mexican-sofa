@@ -19,6 +19,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
   belongs_to :layout
   belongs_to :target_page,
     :class_name => 'Comfy::Cms::Page'
+  belongs_to :pageable, :polymorphic => true
 
   has_many :page_referables
 

@@ -44,6 +44,8 @@ class CreateCms < ActiveRecord::Migration
       t.integer  :layout_id
       t.integer  :parent_id
       t.integer  :target_page_id
+      t.integer  :pageable_id
+      t.string   :pageable_type
       t.string   :label,           :null => false
       t.string   :slug
       t.string   :full_path,       :null => false
