@@ -1,13 +1,12 @@
-class ComfortableMexicanSofa::Tag::PageString
+class ComfortableMexicanSofa::Tag::ObjectString
   include ComfortableMexicanSofa::Tag
 
   def self.regex_tag_signature(identifier = nil)
     identifier ||= IDENTIFIER_REGEX
-    /\{\{\s*cms:page:(#{identifier}):string\s*\}\}/
+    /\{\{\s*cms:object:(#{identifier})\s*\}\}/
   end
 
   def content
-    block.content
+    block.blockable.pageable.send(identifier).to_s
   end
-
 end

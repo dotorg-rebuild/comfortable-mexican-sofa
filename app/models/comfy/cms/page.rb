@@ -51,6 +51,8 @@ class Comfy::Cms::Page < ActiveRecord::Base
   scope :published, -> { where('comfy_cms_pages.publish_at <= ?', Time.now) }
   scope :blog_categories, -> { where(:is_blog => true, :is_blog_post => false) }
 
+  scope :not_pageable, -> { where(pageable_type: nil) }
+
   # -- Class Methods --------------------------------------------------------
   # Tree-like structure for pages
   def self.options_for_select(site, page = nil, current_page = nil, depth = 0, exclude_self = true, spacer = '. . ')

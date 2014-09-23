@@ -132,6 +132,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     default_tag_field(tag, index, :text_area_tag, :data => {'cms-cm-mode' => 'text/x-markdown'})
   end
 
+  def object_string(tag, index)
+    # no editor experience
+  end
+
   def collection(tag, index)
     options = [["---- Select #{tag.collection_class.titleize} ----", nil]] +
       tag.collection_objects.collect do |m|
