@@ -15,7 +15,7 @@ FactoryGirl.define do
       )
     end
     is_published true
-    sequence(:label) { |x| "page-#{x}" }
-    slug { label }
+    sequence(:label) { |x| Faker::Movie.title }
+    slug { label.parameterize }
   end
 end

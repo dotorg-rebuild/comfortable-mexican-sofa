@@ -27,11 +27,11 @@ class Comfy::Cms::ContentControllerTest < ActionController::TestCase
     get :show, :cms_path => ''
     assert_equal 'text/html', response.content_type
   end
-  
+
   def test_show_as_json
     get :show, :cms_path => '', :format => 'json'
     assert_response :success
-    
+
     content = rendered_content_formatter(
       '
       layout_content_a
@@ -55,7 +55,6 @@ class Comfy::Cms::ContentControllerTest < ActionController::TestCase
     assert_equal content,         json_response['content_cache']
     assert_equal 0,               json_response['position']
     assert_equal 1,               json_response['children_count']
-    assert_equal true,            json_response['is_published']
   end
 
   def test_show_with_app_layout
@@ -86,7 +85,7 @@ class Comfy::Cms::ContentControllerTest < ActionController::TestCase
       :slug           => '404',
       :parent_id      => comfy_cms_pages(:default).id,
       :layout_id      => comfy_cms_layouts(:default).id,
-      :is_published   => '1',
+      :publish_at     => Date.new,
       :blocks_attributes => [
         { :identifier => 'default_page_text',
           :content    => 'custom 404 page content' }
@@ -126,7 +125,7 @@ class Comfy::Cms::ContentControllerTest < ActionController::TestCase
 
   def test_show_unpublished
     page = comfy_cms_pages(:default)
-    page.update_columns(:is_published => false)
+    page.update_columns(:publish_at => nil)
 
     assert_exception_raised ActionController::RoutingError, 'Page Not Found at: ""' do
       get :show, :cms_path => ''
@@ -141,7 +140,7 @@ class Comfy::Cms::ContentControllerTest < ActionController::TestCase
       :slug           => 'irb',
       :parent_id      => comfy_cms_pages(:default).id,
       :layout_id      => comfy_cms_layouts(:default).id,
-      :is_published   => '1',
+      :publish_at     => Date.new,
       :blocks_attributes => [
         { :identifier => 'default_page_text',
           :content    => 'text <%= 2 + 2 %> text' }
@@ -160,7 +159,7 @@ class Comfy::Cms::ContentControllerTest < ActionController::TestCase
       :slug           => 'irb',
       :parent_id      => comfy_cms_pages(:default).id,
       :layout_id  => comfy_cms_layouts(:default).id,
-      :is_published   => '1',
+      :publish_at     => Date.new,
       :blocks_attributes => [
         { :identifier => 'default_page_text',
           :content    => 'text <%= 2 + 2 %> text' }

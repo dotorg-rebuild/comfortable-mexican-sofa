@@ -40,18 +40,19 @@ class CreateCms < ActiveRecord::Migration
 
     # -- Pages --------------------------------------------------------------
     create_table :comfy_cms_pages do |t|
-      t.integer :site_id,         :null => false
-      t.integer :layout_id
-      t.integer :parent_id
-      t.integer :target_page_id
-      t.string  :label,           :null => false
-      t.string  :slug
-      t.string  :full_path,       :null => false
-      t.text    :content_cache,   text_limit
-      t.integer :position,        :null => false, :default => 0
-      t.integer :children_count,  :null => false, :default => 0
-      t.boolean :is_published,    :null => false, :default => true
-      t.boolean :is_shared,       :null => false, :default => false
+      t.integer  :site_id,         :null => false
+      t.integer  :layout_id
+      t.integer  :parent_id
+      t.integer  :target_page_id
+      t.string   :label,           :null => false
+      t.string   :slug
+      t.string   :full_path,       :null => false
+      t.text     :content_cache,   text_limit
+      t.integer  :position,        :null => false, :default => 0
+      t.integer  :children_count,  :null => false, :default => 0
+      t.boolean  :is_published,    :null => false, :default => true
+      t.datetime :publish_at,      :default => Date.new
+      t.boolean  :is_shared,       :null => false, :default => false
       t.timestamps
     end
     add_index :comfy_cms_pages, [:site_id, :full_path]

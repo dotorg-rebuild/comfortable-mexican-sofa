@@ -42,7 +42,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
 
   # -- Scopes ---------------------------------------------------------------
   default_scope -> { order('comfy_cms_pages.position') }
-  scope :published, -> { where(:is_published => true) }
+  scope :published, -> { where('comfy_cms_pages.publish_at <= ?', Time.now) }
   scope :blog_categories, -> { where(:is_blog => true, :is_blog_post => false) }
 
   # -- Class Methods --------------------------------------------------------
@@ -97,6 +97,11 @@ class Comfy::Cms::Page < ActiveRecord::Base
   def secret_path
     "/secret/#{secret_secret}"
   end
+
+  def is_published?
+    publish_at.try(:past?)
+  end
+  alias_method :is_published, :is_published?
 
 protected
 

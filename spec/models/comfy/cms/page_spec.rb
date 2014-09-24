@@ -18,6 +18,27 @@ describe Comfy::Cms::Page do
     it { is_expected.to eq page }
   end
 
+  describe '.published' do
+    let!(:page) { create :page, publish_at: publish_at }
+    let(:publish_at) { nil }
+
+    subject { Comfy::Cms::Page.published.find_by(id: page) }
+
+    context 'no publish_at' do
+      it { is_expected.to be_falsey }
+    end
+
+    context 'past publish_at' do
+      let(:publish_at) { 1.day.ago }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'future publish_at' do
+      let(:publish_at) { 1.day.from_now }
+      it { is_expected.to be_falsey }
+    end
+  end
+
 
   describe '#blog_categories' do
     subject { Comfy::Cms::Page }
@@ -35,5 +56,32 @@ describe Comfy::Cms::Page do
     let(:page) { build :page, site: site }
     subject { page.secret_url }
     it { is_expected.to eq '//localhost/secret/d41d8cd98f00b204e9800998ecf8427e' }
+  end
+
+
+  describe '#is_published?' do
+    let(:datetime) { nil }
+    let(:page) { build :page, publish_at: datetime }
+    subject { page.is_published? }
+
+    context 'it should behave like it`s the AR method still' do
+      subject { page.is_published }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'no publish date' do
+      let(:datetime) { nil }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'publish date is in the past' do
+      let(:datetime) { 1.day.ago }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'publish date is in the future' do
+      let(:datetime) { 1.day.from_now }
+      it { is_expected.to be_falsey }
+    end
   end
 end
