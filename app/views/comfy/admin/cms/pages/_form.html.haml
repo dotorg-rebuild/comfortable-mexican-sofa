@@ -40,7 +40,7 @@
 = render :partial => 'form_blocks'
 
 = form.form_group :publish_at do
-  = form.datetime_field :publish_at, :label => t('.publish_at')
+  = form.datetime_select :publish_at, :label => t('.publish_at'), :ampm => true, :include_blank => true
 
 = render 'comfy/admin/cms/partials/page_form_after', :object => form
 
