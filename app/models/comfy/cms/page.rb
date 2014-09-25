@@ -109,7 +109,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
   end
 
   def refers_to
-    page_referables.pluck(:referable_reference_name).join(', ')
+    page_referables.map(&:referable_reference_name).join(', ')
   end
 
   def referred_objects

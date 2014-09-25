@@ -84,4 +84,39 @@ describe Comfy::Cms::Page do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe 'page tag references' do
+    let(:site) { build :site }
+    let(:page) { build :page, site: site }
+    let(:artist1) { build :artist, first_name: 'Tom', last_name: 'Hanks' }
+    let(:artist2) { build :artist, first_name: 'Tom', last_name: 'Selek' }
+    let(:program) { build :program, name: 'Directors Cuts' }
+
+    describe '#refers_to' do
+      let(:list_arg1) { [ 'Tom Hanks', 'Tom Selek' ] }
+      let(:list_arg2) { [ 'Directors Cuts', 'Tom Selek' ] }
+
+      context 'the first time a page is given tags' do
+        before { page.page_referables = [] }
+        it 'populates page_referables table/assignes them to correct page' do
+          expect(page.page_referables.length).to eq 0
+          expect{ page.refers_to = list_arg1 }.to change{Comfy::Cms::PageReferable.count}.by(2)
+          expect(page.page_referables.length).to eq 2
+        end
+      end
+
+      it 'returns a list comma-separated list of names' do
+        page.refers_to = list_arg1
+        expect(page.refers_to).to eq 'Tom Hanks, Tom Selek'
+      end
+
+      it 'overwrites previous page_referables' do
+          page.refers_to = list_arg1
+          expect(page.page_referables.map(&:referable_reference_name)).to include('Tom Hanks')
+          page.refers_to = list_arg2
+          expect(page.page_referables.map(&:referable_reference_name)).to_not include('Tom Hanks')
+          expect(page.page_referables.map(&:referable_reference_name)).to include('Directors Cuts')
+      end
+    end
+  end
 end
