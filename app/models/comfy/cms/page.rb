@@ -94,7 +94,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
 
   def refers_to= list
     self.page_referables = []
-    list.split(',').each do |string|
+    list.each do |string|
       string.strip!
       reference = page_referables.build referable_reference_name: string
       self.class.referable_classes.each do |klass|
