@@ -74,6 +74,12 @@ class Comfy::Cms::Page < ActiveRecord::Base
     result
   end
 
+  def self.referable_autocomplete_candidates string
+    referable_classes.map do |klass|
+      klass.autocomplete_candidates(string)
+    end.flatten
+  end
+
   # -- Instance Methods -----------------------------------------------------
   # For previewing purposes sometimes we need to have full_path set. This
   # full path take care of the pages and its childs but not of the site path

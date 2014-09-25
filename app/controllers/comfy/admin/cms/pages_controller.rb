@@ -104,14 +104,14 @@ protected
       @cms_site   = @page.site
       @cms_layout = @page.layout
       @cms_page   = @page
-      
+
       # Chrome chokes on content with iframes. Issue #434
       response.headers['X-XSS-Protection'] = '0'
-      
+
       render :inline => @page.render, :layout => layout, :content_type => 'text/html'
     end
   end
-  
+
   def page_params
     params.fetch(:page, {}).permit!
   end
