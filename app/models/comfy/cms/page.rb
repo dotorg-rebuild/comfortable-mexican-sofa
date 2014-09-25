@@ -11,11 +11,16 @@ class Comfy::Cms::Page < ActiveRecord::Base
   cms_manageable
   cms_has_revisions_for :blocks_attributes
 
+  cattr_accessor :referable_classes
+  self.referable_classes = []
+
   # -- Relationships --------------------------------------------------------
   belongs_to :site
   belongs_to :layout
   belongs_to :target_page,
     :class_name => 'Comfy::Cms::Page'
+
+  has_many :page_referables
 
   # -- Callbacks ------------------------------------------------------------
   before_validation :assigns_label,
@@ -79,6 +84,27 @@ class Comfy::Cms::Page < ActiveRecord::Base
   # Somewhat unique method of identifying a page that is not a full_path
   def identifier
     self.parent_id.blank?? 'index' : self.full_path[1..-1].slugify
+  end
+
+  def refers_to= list
+    self.page_referables = []
+    list.split(',').each do |string|
+      string.strip!
+      self.class.referable_classes.each do |klass|
+        if object = klass.find_reference(string)
+          page_referables.create page: self, referable: object
+          break
+        end
+      end
+    end
+  end
+
+  def refers_to
+    referred_objects.map(&:reference_name).join(', ')
+  end
+
+  def referred_objects
+    page_referables.map &:referable
   end
 
   # Full url for a page

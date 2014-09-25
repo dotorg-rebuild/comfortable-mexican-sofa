@@ -126,6 +126,14 @@ class CreateCms < ActiveRecord::Migration
     end
     add_index :comfy_cms_categorizations, [:category_id, :categorized_type, :categorized_id], :unique => true,
       :name => 'index_cms_categorizations_on_cat_id_and_catd_type_and_catd_id'
+
+    create_table :page_referables do |t|
+      t.integer :page_id
+      t.integer :referable_id
+      t.string :referable_type
+
+      t.timestamps
+    end
   end
 
   def self.down
