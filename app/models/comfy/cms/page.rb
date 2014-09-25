@@ -96,17 +96,20 @@ class Comfy::Cms::Page < ActiveRecord::Base
     self.page_referables = []
     list.split(',').each do |string|
       string.strip!
+      reference = page_referables.build referable_reference_name: string
       self.class.referable_classes.each do |klass|
         if object = klass.find_reference(string)
-          page_referables.create page: self, referable: object
+          reference.referable = object
+          reference.referable_reference_name = object.reference_name
           break
         end
       end
+      reference.save
     end
   end
 
   def refers_to
-    referred_objects.map(&:reference_name).join(', ')
+    page_referables.pluck(:referable_reference_name).join(', ')
   end
 
   def referred_objects
