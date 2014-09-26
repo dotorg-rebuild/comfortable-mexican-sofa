@@ -128,6 +128,7 @@ class CreateCms < ActiveRecord::Migration
       :name => 'index_cms_categorizations_on_cat_id_and_catd_type_and_catd_id'
 
     create_table :page_referables do |t|
+      t.string :referable_reference_name
       t.integer :page_id
       t.integer :referable_id
       t.string :referable_type
@@ -146,6 +147,7 @@ class CreateCms < ActiveRecord::Migration
     drop_table :comfy_cms_revisions
     drop_table :comfy_cms_categories
     drop_table :comfy_cms_categorizations
+    drop_table :page_referables
   end
 end
 

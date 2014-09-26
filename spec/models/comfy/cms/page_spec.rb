@@ -84,4 +84,49 @@ describe Comfy::Cms::Page do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe 'page tag references' do
+    let(:page) { build :page }
+    let(:list_arg1) { [ 'Tom Hanks', 'Tom Selek' ] }
+
+    describe '#refers_to=' do
+      let(:referable) { double :referable, :save => true, :referable= => true, :referable_reference_name= => true }
+      let(:page_referables) { double :page_referables, build: referable }
+      let(:tom_hanks) { double :tom_hanks, reference_name: 'Tom Hanks' }
+
+      subject { page.page_referables }
+
+      before do
+        allow(page).to receive(:page_referables).and_return(page_referables)
+        allow(page.class).to receive(:find_referable_from_referable_classes).and_yield(tom_hanks)
+        page.refers_to = list_arg1
+      end
+
+      context 'with a different list' do
+        before do
+          allow(page).to receive(:page_referables=)
+          page.refers_to = list_arg1
+        end
+
+        specify 'overwrites previous page_referables' do
+          expect(page).to have_received(:page_referables=).with([])
+        end
+      end
+
+      it { is_expected.to have_received(:build).with(referable_reference_name: 'Tom Hanks') }
+    end
+
+    describe '#refers_to' do
+      let(:page_referables) { double :page_referables, pluck: ['Tom Hanks', 'Tom Selek'] }
+
+      before do
+        allow(page).to receive(:page_referables).and_return(page_referables)
+      end
+
+      it 'returns a list comma-separated list of names' do
+        expect(page.refers_to).to eq 'Tom Hanks, Tom Selek'
+      end
+
+    end
+  end
 end

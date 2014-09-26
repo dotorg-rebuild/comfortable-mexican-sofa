@@ -80,6 +80,14 @@ class Comfy::Cms::Page < ActiveRecord::Base
     end.flatten
   end
 
+  def self.find_referable_from_referable_classes string
+    referable_classes.each do |klass|
+      if object = klass.find_reference(string)
+        yield object
+      end
+    end
+  end
+
   # -- Instance Methods -----------------------------------------------------
   # For previewing purposes sometimes we need to have full_path set. This
   # full path take care of the pages and its childs but not of the site path
@@ -92,20 +100,21 @@ class Comfy::Cms::Page < ActiveRecord::Base
     self.parent_id.blank?? 'index' : self.full_path[1..-1].slugify
   end
 
-  def refers_to= list
+  def refers_to= array_of_strings
     self.page_referables = []
-    list.each do |string|
-      string.strip!
-      reference = page_referables.build referable_reference_name: string
-      self.class.referable_classes.each do |klass|
-        if object = klass.find_reference(string)
-          reference.referable = object
-          reference.referable_reference_name = object.reference_name
-          break
-        end
-      end
-      reference.save
+    array_of_strings.each do |string|
+      add_reference! string
     end
+  end
+
+  def add_reference! string
+    string.strip!
+    reference = page_referables.build referable_reference_name: string
+    self.class.find_referable_from_referable_classes string do |object|
+      reference.referable = object
+      reference.referable_reference_name = object.reference_name
+    end
+    reference.save
   end
 
   def refers_to
