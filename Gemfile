@@ -23,4 +23,5 @@ group :test do
   gem 'ffaker'
   gem 'timecop'
   gem 'pry'
+  gem 'pry-nav'
 end

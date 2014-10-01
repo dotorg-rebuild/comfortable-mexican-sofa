@@ -84,6 +84,64 @@ describe Comfy::Cms::Page do
     end
   end
 
+  describe '#read_page_file' do
+    let(:page) { create :page }
+    let(:comfy_file) { create :image_file }
+
+    before do
+      page.blocks.create! identifier: 'manamana', files: [comfy_file]
+    end
+    subject { page.read_page_file('manamana').url }
+    it { is_expected.to eq comfy_file.file.url }
+  end
+
+  describe '#append_page_file!' do
+    let(:page) { create :page }
+    let(:file) { File.new(Rails.root.join('app/assets/images/comfortable_mexican_sofa/checkerboard.gif')) }
+
+    before do
+      page.append_page_file!('manamana', file)
+    end
+
+    subject { page.read_page_file('manamana').url }
+
+    it { is_expected.to match 'checkerboard' }
+  end
+
+  describe '#write_page_attribute' do
+    let(:page) { create :page }
+    let(:string) { rand(1000).to_s(36) }
+    before do
+      page.write_page_attribute 'manamana', string
+    end
+    subject { page.read_page_attribute('manamana') }
+    it { is_expected.to eq string }
+
+    context 'overwriting an existing attribute' do
+      before do
+        page.write_page_attribute 'manamana', 'bazqux'
+        page.write_page_attribute 'manamana', 'foobar'
+      end
+      it { is_expected.to eq 'foobar' }
+    end
+  end
+
+  describe '#read_page_attribute,#write_page_attribute' do
+    let(:page) { create :page }
+    let(:string) { rand(1000).to_s(36) }
+    before do
+      page.write_page_attribute 'manamana', string
+    end
+
+    subject { page.read_page_attribute('manamana') }
+    it { is_expected.to eq string }
+
+    context 'when the identifier does NOT exist' do
+      subject { page.read_page_attribute('bananana') }
+      it { is_expected.to eq nil }
+    end
+  end
+
   describe 'page tag references' do
     let(:page) { build :page }
     let(:list_arg1) { [ 'Tom Hanks', 'Tom Selek' ] }

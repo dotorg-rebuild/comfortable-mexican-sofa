@@ -11,6 +11,8 @@ class Comfy::Cms::Page < ActiveRecord::Base
   cms_manageable
   cms_has_revisions_for :blocks_attributes
 
+  delegate :label, to: :parent, prefix: true
+
   cattr_accessor :referable_classes
   self.referable_classes = []
 
@@ -52,6 +54,9 @@ class Comfy::Cms::Page < ActiveRecord::Base
   scope :blog_categories, -> { where(:is_blog => true, :is_blog_post => false) }
 
   scope :not_pageable, -> { where(pageable_type: nil) }
+
+  scope :top_blog_posts, -> { unscoped.published.where(is_blog_post: true).order(publish_at: :desc) }
+
 
   # -- Class Methods --------------------------------------------------------
   # Tree-like structure for pages
@@ -149,6 +154,22 @@ class Comfy::Cms::Page < ActiveRecord::Base
     publish_at.try(:past?)
   end
   alias_method :is_published, :is_published?
+
+  def read_page_attribute name
+    blocks.find_by(identifier: name).try(:content)
+  end
+
+  def write_page_attribute name, value
+    blocks.find_or_create_by(identifier: name).update_attributes(content: value)
+  end
+
+  def read_page_file name
+    blocks.find_by(identifier: name).try_chain(:files, :first, :file)
+  end
+
+  def append_page_file! name, file
+    blocks.find_or_create_by(identifier: name).files.create!(file: file, site: site)
+  end
 
 protected
 
