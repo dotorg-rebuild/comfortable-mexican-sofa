@@ -11,5 +11,13 @@ FactoryGirl.define do
     label      'base'
     identifier 'base'
     content    '<header></header><div>{{ cms:page:content:string }}</div><footer></footer>'
+
+    initialize_with { Comfy::Cms::Layout.where(identifier: 'base').first_or_create(
+        site:       create(:site),
+        app_layout: 'application',
+        label:      'base',
+        identifier: 'base',
+        content:    '<header></header><div>{{ cms:page:content:string }}</div><footer></footer>'
+      ) }
   end
 end

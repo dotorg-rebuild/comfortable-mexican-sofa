@@ -88,6 +88,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     render_editor tag.edit_path, tag, index
   end
 
+  def page_blog_showcase tag, index
+    # no editing experience
+  end
+
   def page_accordion tag, index
     render_editor tag.edit_path, tag, index
   end
