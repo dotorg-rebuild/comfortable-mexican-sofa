@@ -196,4 +196,14 @@ describe Comfy::Cms::Page do
       expect(page.pageable_id).to eq site.id
     end
   end
+
+  describe '.ordered_blocks' do
+    let(:page) { create :page }
+
+    subject { page.ordered_blocks }
+
+    it do
+      is_expected.to eq 'foo'
+    end
+  end
 end

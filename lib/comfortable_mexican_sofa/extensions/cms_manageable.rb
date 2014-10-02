@@ -29,6 +29,13 @@ module ComfortableMexicanSofa::CmsManageable
 
   module InstanceMethods
 
+    def ordered_blocks
+      identifiers = tags(true).select{|t| t.is_cms_block?}.map(&:identifier).uniq
+      identifiers.map do |string|
+        blocks.where(identifier: string).first_or_initialize
+      end
+    end
+
     # Transforms existing cms_block information into a hash that can be used
     # during form processing. That's the only way to modify cms_blocks.
     def blocks_attributes(was = false)
