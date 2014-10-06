@@ -3,7 +3,7 @@ FactoryGirl.define do
     site
     layout
     is_published true
-    sequence(:label) { |x| Faker::Movie.title }
+    sequence(:label) { "#{Faker::Movie.title}-#{rand(10000)}" }
     slug { label.parameterize }
   end
 end

@@ -1,20 +1,14 @@
-- page        ||= index_branch
-- children      = @pages_by_parent[page.id]
-- siblings      = @pages_by_parent[page.parent_id]
-- has_children  = children.present?
-- has_siblings  = (siblings.try(:size) || 0) > 1
-- branch_open   = (session[:cms_page_tree] || []).member?(page.id.to_s) || page.root?
-- category_view = params[:category].present?
+- page ||= index_branch
 
 %li{:id => dom_id(page)}
   .item
-    .toggle{:class => branch_open ? 'open' : nil}
-      - if !category_view && has_children && !page.root?
+    .toggle{:class => is_open?(page) ? 'open' : nil}
+      - if show_toggle?(page)
         = link_to toggle_branch_comfy_admin_cms_site_page_path(@site, page), :remote => true do
           %span= t('.toggle')
 
-    .icon{:class => page.is_published?? 'published' : 'draft'}
-      - if !category_view && has_siblings
+    .icon{:class => is_published?(page) ? 'published' : 'draft'}
+      - if reorderable?(page)
         .dragger
           %span &#8645;
 
@@ -30,6 +24,6 @@
       .item-meta
         = link_to page.url, page.url, :target => '_blank'
 
-  - if !category_view && has_children && branch_open
+  - if show_children?(page)
     %ul.children.sortable
-      = render :partial => 'index_branch', :collection => children
+      = render :partial => 'index_branch', :collection => children(page)

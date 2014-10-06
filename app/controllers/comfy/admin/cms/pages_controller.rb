@@ -8,12 +8,19 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   def index
     return redirect_to :action => :new if @site.pages.count == 0
-    @pages_by_parent = @site.pages.not_pageable.includes(:categories).group_by(&:parent_id)
     if params[:category].present?
-      @pages = @site.pages.includes(:categories).for_category(params[:category]).order('label')
+      @pages = collection_source.includes(:categories).for_category(params[:category]).order('label')
     else
-      @pages = [@site.pages.root].compact
+      @pages = [pages_root].compact
     end
+  end
+
+  def collection_source
+    @site.pages
+  end
+
+  def pages_root
+    @site.pages.root
   end
 
   def new
@@ -21,31 +28,44 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def edit
-    render
+    respond_to do |fmt|
+      fmt.html
+      fmt.json do
+        render json: Comfy::Cms::Page.referable_autocomplete_candidates(params[:query])
+      end
+    end
   end
 
   def create
     @page.save!
-    flash[:success] = I18n.t('comfy.admin.cms.pages.created')
+    flash[:success] = t(:created)
     redirect_to :action => :edit, :id => @page
   rescue ActiveRecord::RecordInvalid
-    flash.now[:danger] = I18n.t('comfy.admin.cms.pages.creation_failure')
+    flash.now[:danger] = t(:creation_failure)
     render :action => :new
   end
 
   def update
     @page.save!
-    flash[:success] = I18n.t('comfy.admin.cms.pages.updated')
+    flash[:success] = t(:updated)
     redirect_to :action => :edit, :id => @page
   rescue ActiveRecord::RecordInvalid
-    flash.now[:danger] = I18n.t('comfy.admin.cms.pages.update_failure')
+    flash.now[:danger] = t(:update_failure)
     render :action => :edit
   end
 
   def destroy
     @page.destroy
-    flash[:success] = I18n.t('comfy.admin.cms.pages.deleted')
+    flash[:success] = t(:deleted)
     redirect_to :action => :index
+  end
+
+  def t thing
+    I18n.t("#{translate_base}.#{thing}")
+  end
+
+  def translate_base
+    'comfy.admin.cms.pages'
   end
 
   def form_blocks
@@ -54,7 +74,6 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def toggle_branch
-    @pages_by_parent = @site.pages.not_pageable.includes(:categories).group_by(&:parent_id)
     @page = @site.pages.find(params[:id])
     s   = (session[:cms_page_tree] ||= [])
     id  = @page.id.to_s
@@ -70,7 +89,19 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
     render :nothing => true
   end
 
+  def pages_by_parent(page_id)
+    page_id = page_id.to_param.try(:to_i)
+    return unless all_parents.include? page_id
+    @_pages_by_parent ||= {}
+    @_pages_by_parent[page_id] ||= @site.pages.where(parent: page_id).includes(:categories, :site)
+  end
+
+
 protected
+
+  def all_parents
+    @_all_parents ||= Comfy::Cms::Page.unscoped.distinct(:parent_id).pluck(:parent_id)
+  end
 
   def check_for_layouts
     if @site.layouts.count == 0
@@ -81,8 +112,12 @@ protected
 
   def build_cms_page
     @page = @site.pages.new(page_params)
-    @page.parent ||= (@site.pages.find_by_id(params[:parent_id]) || @site.pages.root)
-    @page.layout ||= (@page.parent && @page.parent.layout || @site.layouts.first)
+    @page.parent ||= (@site.pages.find_by_id(params[:parent_id]) || pages_root)
+    @page.layout ||= default_layout
+  end
+
+  def default_layout
+    (@page.parent && @page.parent.layout || @site.layouts.first)
   end
 
   def build_file
