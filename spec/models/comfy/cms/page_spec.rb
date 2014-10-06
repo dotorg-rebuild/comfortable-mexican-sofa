@@ -200,10 +200,10 @@ describe Comfy::Cms::Page do
   describe '.ordered_blocks' do
     let(:page) { create :page }
 
-    subject { page.ordered_blocks }
+    subject { page.ordered_blocks.first }
 
     it do
-      is_expected.to eq 'foo'
+      is_expected.to be_kind_of Comfy::Cms::Block
     end
   end
 end
