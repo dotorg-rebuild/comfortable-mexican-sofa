@@ -55,6 +55,8 @@ class CreateCms < ActiveRecord::Migration
       t.boolean  :is_published,    :null => false, :default => true
       t.datetime :publish_at,      :default => Date.new
       t.boolean  :is_shared,       :null => false, :default => false
+      t.boolean  :is_blog,         :null => false, :default => false
+      t.boolean  :is_blog_post,    :null => false, :default => false
       t.timestamps
     end
     add_index :comfy_cms_pages, [:site_id, :full_path]
