@@ -54,6 +54,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
   scope :blog_categories, -> { where(:is_blog => true, :is_blog_post => false) }
 
   scope :not_pageable, -> { where(pageable_type: nil) }
+  scope :not_blog, -> { where(is_blog: false ) }
 
   scope :top_blog_posts, -> { unscoped.published.where(is_blog_post: true).order(publish_at: :desc) }
 

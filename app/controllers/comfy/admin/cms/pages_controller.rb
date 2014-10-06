@@ -16,7 +16,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def collection_source
-    @site.pages
+    @site.pages.not_pageable.not_blog
   end
 
   def pages_root
@@ -93,7 +93,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
     page_id = page_id.to_param.try(:to_i)
     return unless all_parents.include? page_id
     @_pages_by_parent ||= {}
-    @_pages_by_parent[page_id] ||= @site.pages.where(parent: page_id).includes(:categories, :site)
+    @_pages_by_parent[page_id] ||= collection_source.where(parent: page_id).includes(:categories, :site)
   end
 
 
