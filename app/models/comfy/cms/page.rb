@@ -97,6 +97,14 @@ class Comfy::Cms::Page < ActiveRecord::Base
     end
   end
 
+  def top_blog_posts
+    if parent.root?
+      Comfy::Cms::Page.top_blog_posts
+    else
+      Comfy::Cms::Page.top_blog_posts.where(parent: self)
+    end
+  end
+
   # -- Instance Methods -----------------------------------------------------
   # For previewing purposes sometimes we need to have full_path set. This
   # full path take care of the pages and its childs but not of the site path
