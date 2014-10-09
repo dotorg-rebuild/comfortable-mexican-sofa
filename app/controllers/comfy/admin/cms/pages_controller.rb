@@ -8,8 +8,11 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
 
   def index
     return redirect_to :action => :new if @site.pages.count == 0
+    @q = collection_source.search(params[:q])
     if params[:category].present?
       @pages = collection_source.includes(:categories).for_category(params[:category]).order('label')
+    elsif params[:q].present?
+      @pages = @q.result
     else
       @pages = [pages_root].compact
     end

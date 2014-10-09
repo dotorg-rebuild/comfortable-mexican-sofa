@@ -9,6 +9,12 @@
 
 = render :partial => 'comfy/admin/cms/categories/index', :object => 'Comfy::Cms::Page'
 
+.search
+  = search_form_for(@q, url: 'pages') do |f|
+    = f.search_field :label_cont, placeholder: 'Label'
+    = f.submit
+    = link_to "Clear Search", request.path, class:"cancel-button"
+
 %ul.list.sortable
   = render :partial => 'index_branch', :collection => @pages
 

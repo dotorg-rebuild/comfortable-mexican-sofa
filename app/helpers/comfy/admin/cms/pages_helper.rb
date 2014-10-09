@@ -1,6 +1,6 @@
 module Comfy::Admin::Cms::PagesHelper
-  def category_view
-    params[:category].present?
+  def flat_view
+    params[:q].present? || params[:category].present?
   end
 
   def children(page)
@@ -36,7 +36,7 @@ module Comfy::Admin::Cms::PagesHelper
   end
 
   def reorderable?(page)
-    !category_view && has_siblings?(page)
+    !flat_view && has_siblings?(page)
   end
 
   def selectable_parent?(page)
@@ -44,11 +44,11 @@ module Comfy::Admin::Cms::PagesHelper
   end
 
   def show_children?(page)
-    !category_view && has_children?(page) && is_open?(page)
+    !flat_view && has_children?(page) && is_open?(page)
   end
 
   def show_toggle?(page)
-    !category_view && has_children?(page) && !page_root?(page)
+    !flat_view && has_children?(page) && !page_root?(page)
   end
 
   def siblings(page)

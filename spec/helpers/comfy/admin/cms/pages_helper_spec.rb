@@ -7,8 +7,8 @@ describe Comfy::Admin::Cms::PagesHelper, type: :helper do
     allow(helper).to receive_messages(page: page)
   end
 
-  describe '#category_view' do
-    subject { helper.category_view }
+  describe '#flat_view' do
+    subject { helper.flat_view }
     let(:params) { {
       category: category
     } }
@@ -83,11 +83,11 @@ describe Comfy::Admin::Cms::PagesHelper, type: :helper do
     before do
       allow(helper).to receive_messages(
         has_siblings?: has_siblings?,
-        category_view: category_view,
+        flat_view: flat_view,
       )
     end
 
-    truth_table :has_siblings?, :category_view, [
+    truth_table :has_siblings?, :flat_view, [
     true,  [     true,           false ],
     false, [     true,           true  ],
     false, [     false,          true  ],
@@ -116,13 +116,13 @@ describe Comfy::Admin::Cms::PagesHelper, type: :helper do
     subject { helper.show_children?(page) }
     before do
       allow(helper).to receive_messages(
-        category_view: category_view,
+        flat_view: flat_view,
         has_children?: has_children?,
         is_open?: is_open?
       )
     end
 
-    truth_table :category_view, :has_children?, :is_open?, [
+    truth_table :flat_view, :has_children?, :is_open?, [
     true,     [  false,          true,           true    ],
     false,    [  true,           true,           false   ],
     false,    [  true,           true,           true    ],
@@ -138,13 +138,13 @@ describe Comfy::Admin::Cms::PagesHelper, type: :helper do
     subject { helper.show_toggle?(page) }
     before do
       allow(helper).to receive_messages(
-        category_view: category_view,
+        flat_view: flat_view,
         has_children?: has_children?,
         page_root?: page_root?,
       )
     end
 
-    truth_table :category_view, :has_children?, :page_root?, [
+    truth_table :flat_view, :has_children?, :page_root?, [
     true,  [     false,          true,           false         ],
     false, [     false,          true,           true          ],
     false, [     false,          false,          false         ],

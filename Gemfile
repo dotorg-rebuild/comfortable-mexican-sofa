@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gemspec
 gem 'rails', '4.1.1'
+gem 'ransack'
 
 group :development do
   gem 'awesome_print'
