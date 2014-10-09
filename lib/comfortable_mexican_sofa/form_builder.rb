@@ -100,6 +100,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     render_editor tag.edit_path, tag, index
   end
 
+  def page_news_and_stories(tag, index)
+    render_editor tag.edit_path, tag, index
+  end
+
   def page_date_time(tag, index)
     default_tag_field(tag, index, :text_field_tag, :data => {'cms-datetime' => true})
   end
@@ -171,7 +175,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     content_field_name = "#{fieldname}[blocks_attributes][#{index}][content]"
     content = ''
 
-    content << @template.render(partial: partial, locals: { content_field_name: content_field_name, value: tag.content })
+    content << @template.render(partial: partial, locals: { comfy_tag: tag, content_field_name: content_field_name, value: tag.content })
     content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
 
     form_group label: { text: label } do
