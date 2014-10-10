@@ -101,12 +101,12 @@ describe Comfy::Admin::Cms::PagesHelper, type: :helper do
       allow(controller).to receive(:pages_root).and_return(pages_root)
     end
 
-    context "when it's NOT the blog root" do
+    context "when it's NOT the root" do
       let(:pages_root) { "something else" }
       it { is_expected.to be_truthy }
     end
 
-    context "when it is the blog root" do
+    context "when it is the root" do
       let(:pages_root) { page }
       it { is_expected.to be_falsey }
     end

@@ -51,13 +51,8 @@ class Comfy::Cms::Page < ActiveRecord::Base
   # -- Scopes ---------------------------------------------------------------
   default_scope -> { order('comfy_cms_pages.position') }
   scope :published, -> { where('comfy_cms_pages.publish_at <= ?', Time.now) }
-  scope :blog_categories, -> { where(:is_blog => true, :is_blog_post => false) }
 
   scope :not_pageable, -> { where(pageable_type: nil) }
-  scope :not_blog, -> { where(is_blog: false ) }
-
-  scope :top_blog_posts, -> { unscoped.published.where(is_blog_post: true).order(publish_at: :desc) }
-
 
   # -- Class Methods --------------------------------------------------------
   # Tree-like structure for pages
@@ -94,14 +89,6 @@ class Comfy::Cms::Page < ActiveRecord::Base
       if object = klass.find_reference(string)
         yield object
       end
-    end
-  end
-
-  def top_blog_posts
-    if parent.root?
-      Comfy::Cms::Page.top_blog_posts
-    else
-      Comfy::Cms::Page.top_blog_posts.where(parent: self)
     end
   end
 

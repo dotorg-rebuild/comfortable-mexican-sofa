@@ -19,7 +19,7 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
   end
 
   def collection_source
-    @site.pages.not_pageable.not_blog
+    @site.pages.not_pageable
   end
 
   def pages_root

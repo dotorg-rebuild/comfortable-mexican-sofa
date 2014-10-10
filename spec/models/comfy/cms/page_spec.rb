@@ -1,4 +1,3 @@
-require 'spec_helper'
 
 describe Comfy::Cms::Page do
   describe '.find_by_secret' do
@@ -37,18 +36,6 @@ describe Comfy::Cms::Page do
       let(:publish_at) { 1.day.from_now }
       it { is_expected.to be_falsey }
     end
-  end
-
-
-  describe '#blog_categories' do
-    subject { Comfy::Cms::Page }
-
-    before do
-      allow(subject).to receive(:where)
-      subject.blog_categories
-    end
-
-    it { is_expected.to have_received(:where).with(is_blog: true, is_blog_post: false) }
   end
 
   describe '#secret_url' do
