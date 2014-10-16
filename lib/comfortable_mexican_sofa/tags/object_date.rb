@@ -12,7 +12,7 @@ class ComfortableMexicanSofa::Tag::ObjectDate
 
   def render
     return if value.method(:to_s).arity.zero? # don't call to_s with a param on anything except date and time types!
-    fmt = params.first.try(:to_sym) # date formats expect symbols only!?
+    fmt = params.first.try(:to_sym) || :long # date formats expect symbols only!?
     value.try(:to_s, fmt)
   end
 
