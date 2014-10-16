@@ -21,7 +21,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
   belongs_to :layout
   belongs_to :target_page,
     :class_name => 'Comfy::Cms::Page'
-  belongs_to :pageable, :polymorphic => true
+  belongs_to :pageable, :polymorphic => true, :autosave => true
 
   has_many :page_referables
 
@@ -168,7 +168,22 @@ class Comfy::Cms::Page < ActiveRecord::Base
   end
 
   def pageable_attributes= hash
-    pageable.update_attributes hash
+    if pageable.nil? && pageable_type
+      self.pageable = pageable_type.classify.constantize.new
+      quietly_update_pageable_attributes hash
+    elsif pageable.present?
+      quietly_update_pageable_attributes hash
+    end
+  end
+
+  # silently ignores attributes which the pageable object
+  # doesn't respond to
+  def quietly_update_pageable_attributes hash
+    hash.each do |key, value|
+      setter = "#{key}="
+      next unless pageable.respond_to?(setter)
+      pageable.send(setter, value)
+    end
   end
 
 protected

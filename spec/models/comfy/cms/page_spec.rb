@@ -202,7 +202,30 @@ describe Comfy::Cms::Page do
         label: 'label Label'
       }
 
+      page.save
       expect(pageable.reload.label).to eq 'label Label'
     end
+
+    context 'when the pageable doesnt have an assigned attribute' do
+      it do
+        expect do
+          page.pageable_attributes = {
+            foobar: 'baz  qux'
+          }
+        end.to_not raise_error
+      end
+    end
+
+    context 'when the pageable is not there yet' do
+      let(:page) { create :page }
+      it do
+        page.pageable_type = 'Comfy::Cms::Layout'
+        page.pageable_attributes = {
+          label: 'label Label'
+        }
+        expect(page.pageable).to be_kind_of(Comfy::Cms::Layout)
+      end
+    end
+
   end
 end
