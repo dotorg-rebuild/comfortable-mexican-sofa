@@ -7,6 +7,6 @@ class ComfortableMexicanSofa::Tag::ObjectString
   end
 
   def content
-    block.blockable.pageable.send(identifier).to_s
+    blockable.pageable.send(identifier).to_s
   end
 end

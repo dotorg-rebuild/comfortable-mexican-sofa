@@ -144,6 +144,17 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     default_tag_field(tag, index, :text_area_tag, :data => {'cms-cm-mode' => 'text/x-markdown'})
   end
 
+  def object_field_string(tag, index)
+    return if tag.blockable.pageable.nil?
+    name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}]"
+    value = tag.content
+    label = tag.identifier.titleize
+
+    form_group :label => {:text => label} do
+      @template.text_field_tag name, value, class: 'form-control'
+    end
+  end
+
   def object_string(tag, index)
     # no editor experience
   end

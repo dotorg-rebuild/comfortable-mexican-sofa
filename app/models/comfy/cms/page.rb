@@ -167,6 +167,10 @@ class Comfy::Cms::Page < ActiveRecord::Base
     blocks.find_or_create_by(identifier: name).files.create!(file: file, site: site)
   end
 
+  def pageable_attributes= hash
+    pageable.update_attributes hash
+  end
+
 protected
 
   def assigns_label

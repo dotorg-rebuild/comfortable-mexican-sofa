@@ -1,4 +1,3 @@
-
 describe Comfy::Cms::Page do
   describe '.find_by_secret' do
     let(:page) { create :page }
@@ -184,13 +183,26 @@ describe Comfy::Cms::Page do
     end
   end
 
-  describe '.ordered_blocks' do
+  describe '#ordered_blocks' do
     let(:page) { create :page }
 
     subject { page.ordered_blocks.first }
 
     it do
       is_expected.to be_kind_of Comfy::Cms::Block
+    end
+  end
+
+  describe '#pageable_attributes' do
+    let(:page) { create :page, pageable: pageable }
+    let(:pageable) { create :layout }
+
+    it do
+      page.pageable_attributes = {
+        label: 'label Label'
+      }
+
+      expect(pageable.reload.label).to eq 'label Label'
     end
   end
 end
