@@ -42,13 +42,21 @@ describe ComfortableMexicanSofa::Tag::ObjectDate do
   end
 
   describe '#value' do
+    let(:identifier) { 'start_date' }
+    before do
+      allow(tag).to receive(:identifier).and_return(identifier)
+      tag.value
+    end
+    subject { pageable }
+
     context 'delegates to the pageable object' do
-      before do
-        allow(tag).to receive(:identifier).and_return('start_date')
-        tag.value
-      end
-      subject { pageable }
       it { is_expected.to have_received(:start_date) }
+    end
+
+    context 'doesnt explode if the pageable doesnt have that accessor' do
+      subject { tag.value }
+      let(:identifier) { 'non_extant_method' }
+      it { is_expected.to be_nil }
     end
   end
 end

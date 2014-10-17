@@ -17,6 +17,7 @@ class ComfortableMexicanSofa::Tag::ObjectDate
   end
 
   def value
+    return nil unless blockable.pageable.respond_to?(identifier)
     blockable.pageable.send(identifier)
   end
 end
