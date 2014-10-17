@@ -30,13 +30,16 @@ class Comfy::Admin::Cms::PagesController < Comfy::Admin::Cms::BaseController
     render
   end
 
-  def edit
+  def autocomplete_refers_to
     respond_to do |fmt|
       fmt.html
       fmt.json do
         render json: Comfy::Cms::Page.referable_autocomplete_candidates(params[:query])
       end
     end
+  end
+
+  def edit
   end
 
   def create
