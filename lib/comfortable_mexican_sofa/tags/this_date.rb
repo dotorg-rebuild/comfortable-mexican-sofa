@@ -1,3 +1,5 @@
+require_relative 'object_date'
+
 class ComfortableMexicanSofa::Tag::ThisDate < ComfortableMexicanSofa::Tag::ObjectDate
   include ComfortableMexicanSofa::Tag
 
