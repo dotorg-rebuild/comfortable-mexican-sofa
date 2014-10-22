@@ -19,6 +19,8 @@ protected
   def cache_control_header
     if params[:cache_buster].present?
       response.headers['Cache-Control'] = "public, max-age=#{1.year.to_i}"
+    else
+      expires_in 15.minutes, public: true
     end
   end
 
