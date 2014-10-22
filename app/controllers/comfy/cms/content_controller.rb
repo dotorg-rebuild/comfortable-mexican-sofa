@@ -14,6 +14,7 @@ class Comfy::Cms::ContentController < Comfy::Cms::BaseController
   rescue_from ActiveRecord::RecordNotFound, :with => :page_not_found
 
   def show
+    expires_in 15.minutes, public: true
     if @cms_page.target_page.present?
       redirect_to @cms_page.target_page.url
     else
