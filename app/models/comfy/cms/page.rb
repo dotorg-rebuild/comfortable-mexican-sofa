@@ -60,7 +60,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
     return [] if (current_page ||= site.pages.root) == page && exclude_self || !current_page
     out = []
     out << [ "#{spacer*depth}#{current_page.label}", current_page.id ] unless current_page == page
-    current_page.children.each do |child|
+    current_page.children.not_pageable.each do |child|
       out += options_for_select(site, page, child, depth + 1, exclude_self, spacer)
     end if current_page.children_count.nonzero?
     return out.compact
