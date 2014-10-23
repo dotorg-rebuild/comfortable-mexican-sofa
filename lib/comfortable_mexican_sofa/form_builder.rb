@@ -144,8 +144,24 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     default_tag_field(tag, index, :text_area_tag, :data => {'cms-cm-mode' => 'text/x-markdown'})
   end
 
+  def page_event_grid(tag, index)
+    # no editor experience
+  end
+
   def object_string(tag, index)
     # no editor experience
+  end
+
+  def object_field_select(tag, index)
+    return if tag.blockable.pageable.nil?
+    name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}]"
+    value = tag.content
+    label = tag.identifier.titleize
+
+    form_group :label => {:text => label} do
+      @template.select_tag name,
+        @template.options_for_select(tag.params.insert(0, ''), tag.content), class: 'form-control'
+    end
   end
 
   def object_field_string(tag, index)
@@ -161,13 +177,35 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
 
   def object_field_date(tag, index)
     return if tag.blockable.pageable.nil?
-    name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}]"
-    value = tag.content
+    result = ''
+    field_name = field_name_for(tag)
+    attr_name = "pageable_attributes][#{tag.identifier}%s"
+    name = "#{field_name}[#{attr_name % ''}]"
+    value = Time.parse(tag.content)
     label = tag.identifier.titleize
 
-    form_group :label => {:text => label} do
-      @template.text_field_tag name, value, :data => {'cms-datetime' => true}, :class => 'form-control'
+    result << form_group(:label => {:text => label}) do
+      tags = ''
+      tags << @template.select_year(  value.year,  {field_name: attr_name % '(1i)', prefix: field_name}, class: 'form-control')
+      tags << @template.select_month( value.month, {field_name: attr_name % '(2i)', prefix: field_name}, class: 'form-control')
+      tags << @template.select_day(   value.day,   {field_name: attr_name % '(3i)', prefix: field_name}, class: 'form-control')
+      tags << ' — '
+      tags << @template.select_hour(  value.hour,  {field_name: attr_name % '(4i)', prefix: field_name, ampm: true}, class: 'form-control')
+      tags << ' : '
+      tags << @template.select_minute(value.min,   {field_name: attr_name % '(5i)', prefix: field_name}, class: 'form-control')
+      @template.content_tag(:div,
+        tags.html_safe,
+        class: 'rails-bootstrap-forms-datetime-select')
     end
+
+    if tag.has_zone?
+      name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}_time_zone]"
+      result << form_group(:label => {:text => "#{label} Time Zone"}) do
+        @template.select_tag name, @template.time_zone_options_for_select(tag.zone), :class => 'form-control'
+      end
+    end
+
+    result.html_safe
   end
 
   def collection(tag, index)
