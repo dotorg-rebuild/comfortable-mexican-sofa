@@ -201,7 +201,13 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     if tag.has_zone?
       name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}_time_zone]"
       result << form_group(:label => {:text => "#{label} Time Zone"}) do
-        @template.select_tag name, @template.time_zone_options_for_select(tag.zone), :class => 'form-control'
+        @template.select_tag name,
+          @template.options_from_collection_for_select(
+            ActiveSupport::TimeZone.all,
+            :to_s,
+            :to_s,
+            selected: tag.zone),
+          :class => 'form-control'
       end
     end
 
