@@ -16,7 +16,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
   cattr_accessor :referable_classes
   self.referable_classes = []
 
-  # -- Relationships --------------------------------------------------------
+  # -- Relationhips --------------------------------------------------------
   belongs_to :site
   belongs_to :layout
   belongs_to :target_page,
@@ -179,11 +179,16 @@ class Comfy::Cms::Page < ActiveRecord::Base
   # silently ignores attributes which the pageable object
   # doesn't respond to
   def quietly_update_pageable_attributes hash
-    hash.each do |key, value|
-      setter = "#{key}="
-      next unless pageable.respond_to?(setter)
-      pageable.send(setter, value)
+    hash.reject! do |key, value|
+      if key.respond_to?(:gsub)
+        !pageable.attributes.include?(key.gsub(/\([^)]*\)/, ''))
+      else
+        setter = "#{key}="
+        pageable.send(setter, value) if pageable.respond_to?(setter)
+        true # if set through the setter, prevent it from being set again below
+      end
     end
+    pageable.attributes = hash
   end
 
 protected
