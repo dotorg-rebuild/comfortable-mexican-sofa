@@ -175,43 +175,88 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     end
   end
 
+  class ObjectFieldDateBuilder
+    attr_reader :builder, :tag, :index
+
+    def initialize(builder, template, tag, index)
+      @builder, @tag, @index = builder, tag, index
+      @template = template
+      @result = ''
+    end
+
+    def field_name
+      builder.field_name_for(tag)
+    end
+
+    def attr_name
+      "pageable_attributes][#{tag.identifier}%s"
+    end
+
+    def name
+      "#{field_name}[#{attr_name % ''}]"
+    end
+
+    def value
+      tag.content || DateTime.now
+    end
+
+    def label
+      tag.identifier.titleize
+    end
+
+    def select_tag(position, options = {})
+      @template.send("select_#{position}",
+                     value.send(position),
+                     {
+                       field_name: attr_name_for_position(position),
+                       prefix: field_name
+                     }.merge(options), class: 'form-control')
+    end
+
+    DATETIME_ARGS = [:year, :month, :day, :hour, :minute]
+
+    def datetime_arg position
+      "(#{DATETIME_ARGS.index(position)+1}i)"
+    end
+
+    def attr_name_for_position position
+      attr_name % datetime_arg(position)
+    end
+
+    def build
+      @result << builder.form_group(:label => {:text => label}) do
+        tags = ''
+        tags << select_tag(:year)
+        tags << select_tag(:month)
+        tags << select_tag(:day)
+        tags << ' — '
+        tags << select_tag(:hour, ampm: true)
+        tags << ' : '
+        tags << select_tag(:minute)
+        @template.content_tag(:div,
+          tags.html_safe,
+          class: 'rails-bootstrap-forms-datetime-select')
+      end
+      if tag.has_zone?
+        name = "#{builder.field_name_for(tag)}[pageable_attributes][#{tag.identifier}_time_zone]"
+        @result << builder.form_group(:label => {:text => "#{label} Time Zone"}) do
+          @template.select_tag name,
+            @template.options_from_collection_for_select(
+              ActiveSupport::TimeZone.all,
+              :to_s,
+              :to_s,
+              selected: tag.zone),
+              :class => 'form-control'
+        end
+      end
+
+      @result.html_safe
+    end
+  end
+
   def object_field_date(tag, index)
     return if tag.blockable.pageable.nil?
-    result = ''
-    field_name = field_name_for(tag)
-    attr_name = "pageable_attributes][#{tag.identifier}%s"
-    name = "#{field_name}[#{attr_name % ''}]"
-    value = tag.content || DateTime.now
-    label = tag.identifier.titleize
-
-    result << form_group(:label => {:text => label}) do
-      tags = ''
-      tags << @template.select_year(  value.year,  {field_name: attr_name % '(1i)', prefix: field_name}, class: 'form-control')
-      tags << @template.select_month( value.month, {field_name: attr_name % '(2i)', prefix: field_name}, class: 'form-control')
-      tags << @template.select_day(   value.day,   {field_name: attr_name % '(3i)', prefix: field_name}, class: 'form-control')
-      tags << ' — '
-      tags << @template.select_hour(  value.hour,  {field_name: attr_name % '(4i)', prefix: field_name, ampm: true}, class: 'form-control')
-      tags << ' : '
-      tags << @template.select_minute(value.min,   {field_name: attr_name % '(5i)', prefix: field_name}, class: 'form-control')
-      @template.content_tag(:div,
-        tags.html_safe,
-        class: 'rails-bootstrap-forms-datetime-select')
-    end
-
-    if tag.has_zone?
-      name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}_time_zone]"
-      result << form_group(:label => {:text => "#{label} Time Zone"}) do
-        @template.select_tag name,
-          @template.options_from_collection_for_select(
-            ActiveSupport::TimeZone.all,
-            :to_s,
-            :to_s,
-            selected: tag.zone),
-          :class => 'form-control'
-      end
-    end
-
-    result.html_safe
+    ObjectFieldDateBuilder.new(self, @template, tag, index).build
   end
 
   def collection(tag, index)
