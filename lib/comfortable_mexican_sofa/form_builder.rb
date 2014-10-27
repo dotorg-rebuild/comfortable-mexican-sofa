@@ -181,7 +181,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     field_name = field_name_for(tag)
     attr_name = "pageable_attributes][#{tag.identifier}%s"
     name = "#{field_name}[#{attr_name % ''}]"
-    value = DateTime.parse(tag.content)
+    value = tag.content || DateTime.now
     label = tag.identifier.titleize
 
     result << form_group(:label => {:text => label}) do

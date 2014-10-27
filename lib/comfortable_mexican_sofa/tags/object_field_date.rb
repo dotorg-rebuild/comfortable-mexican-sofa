@@ -8,7 +8,7 @@ class ComfortableMexicanSofa::Tag::ObjectFieldDate
 
   def content
     return nil unless blockable.pageable.respond_to?(identifier)
-    blockable.pageable.send(identifier).to_s
+    blockable.pageable.send(identifier)
   end
 
   def zone
