@@ -13,13 +13,13 @@ describe ComfortableMexicanSofa::FormBuilder do
     let(:event)    { double :event }
     let(:content)  { DateTime.new(1999, 12, 31, 23, 59) }
     let(:has_zone) { true }
-    let(:tag)    { double(:tag, {
-                   blockable: page,
-                   content: content,
-                   has_zone?: has_zone,
-                   identifier: 'start_date',
-                   zone: 'Zone',
-                 })}
+    let(:tag)      { double(:tag, {
+                     blockable: page,
+                     content: content,
+                     has_zone?: has_zone,
+                     identifier: 'start_date',
+                     zone: 'Zone',
+                   })}
     subject { form.object_field_date(tag, 1) }
 
     it do
