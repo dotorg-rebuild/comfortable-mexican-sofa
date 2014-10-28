@@ -1,25 +1,32 @@
 require 'spec_helper'
 
 describe ComfortableMexicanSofa::FormBuilder do
+  let(:event)    { double :event }
+  let(:template_struct) { Struct.new(:output_buffer) }
+  let(:template) { template_struct.new.
+                   extend(ActionView::Helpers::FormHelper).
+                   extend(ActionView::Helpers::FormTagHelper).
+                   extend(ActionView::Helpers::DateHelper).
+                   extend(ActionView::Helpers::RenderingHelper).
+                   extend(ActionView::Helpers::FormOptionsHelper) }
+  let(:page)     { double :page, pageable: event }
+  let(:form)     { ComfortableMexicanSofa::FormBuilder.new(:page, page, template, {}) }
+  let(:content)  { DateTime.new(1999, 12, 31, 23, 59) }
+  let(:has_zone) { true }
+  let(:identifier) { 'start_date' }
+  let(:tag)      { double(:tag, {
+                   blockable: page,
+                   content: content,
+                   has_zone?: has_zone,
+                   identifier: identifier,
+                   zone: 'Zone',
+                 })}
+
+
+  let(:field_name_for_expectation) { 'double' }
+  let(:human_attribute_name_expectation) { 'Start date' }
+
   describe '#object_field_date' do
-    let(:template_struct) { Struct.new(:output_buffer) }
-    let(:template) { template_struct.new.
-                     extend(ActionView::Helpers::FormHelper).
-                     extend(ActionView::Helpers::FormTagHelper).
-                     extend(ActionView::Helpers::DateHelper).
-                     extend(ActionView::Helpers::FormOptionsHelper) }
-    let(:page)     { double :page, pageable: event }
-    let(:form)     { ComfortableMexicanSofa::FormBuilder.new(:page, page, template, {}) }
-    let(:event)    { double :event }
-    let(:content)  { DateTime.new(1999, 12, 31, 23, 59) }
-    let(:has_zone) { true }
-    let(:tag)      { double(:tag, {
-                     blockable: page,
-                     content: content,
-                     has_zone?: has_zone,
-                     identifier: 'start_date',
-                     zone: 'Zone',
-                   })}
     subject { form.object_field_date(tag, 1) }
 
     it do
@@ -69,4 +76,44 @@ describe ComfortableMexicanSofa::FormBuilder do
       end
     end
   end
+
+  describe '#render_editor' do
+    let(:path) { 'some/path' }
+    subject { form.render_editor path, tag, 1 }
+
+    before do
+      allow(form).to receive(:field_name_for).and_return(field_name_for_expectation)
+      allow(form).to receive(:human_attribute_name).and_return(human_attribute_name_expectation)
+      expect(template).to receive(:render).with(
+        partial: path,
+        locals: {
+          comfy_tag: tag,
+          content_field_name: 'double[blocks_attributes][1][content]',
+          value: tag.content
+        }
+      ).and_return('the rendered content')
+      expect(template).to receive(:hidden_field_tag).with(
+        "double[blocks_attributes][1][identifier]",
+        tag.identifier,
+        :id => nil).and_return(' hidden field')
+    end
+
+    it { is_expected.to eq %{<div class="form-group"><label class="control-label" for="page_">Start date</label>the rendered content hidden field</div>} }
+  end
+
+
+  describe '#field_name_for' do
+    subject { form.field_name_for(tag) }
+
+    it { is_expected.to eq field_name_for_expectation }
+  end
+
+  describe '#human_attribute_name' do
+    let(:page) { build :page }
+    let(:identifier) { 'start_date' }
+    subject { form.human_attribute_name(tag) }
+
+    it { is_expected.to eq human_attribute_name_expectation }
+  end
+
 end

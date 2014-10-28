@@ -1,6 +1,8 @@
 class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
   require_relative 'form_builder/object_field_date_builder'
 
+  attr_reader :template
+
   def field_name_for(tag)
     tag.blockable.class.name.demodulize.underscore.gsub(/\//,'_')
   end
@@ -26,13 +28,13 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
         label << " (#{coach})"
       end
 
-      content << @template.send(method, name, input_params)
-      content << @template.render(:partial => 'comfy/admin/cms/files/page_form', :object => tag.block)
+      content << template.send(method, name, input_params)
+      content << template.render(:partial => 'comfy/admin/cms/files/page_form', :object => tag.block)
     else
       options[:class] = ' form-control'
-      content << @template.send(method, "#{fieldname}[blocks_attributes][#{index}][content]", tag.content, options)
+      content << template.send(method, "#{fieldname}[blocks_attributes][#{index}][content]", tag.content, options)
     end
-    content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
+    content << template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
 
     form_group :label => {:text => label} do
       content.html_safe
@@ -61,9 +63,9 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
 
   def field_boolean(tag, index)
     fieldname = field_name_for(tag)
-    content = @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][content]", '', :id => nil)
-    content << @template.check_box_tag("#{fieldname}[blocks_attributes][#{index}][content]", '1', tag.content.present?, :id => nil)
-    content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
+    content = template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][content]", '', :id => nil)
+    content << template.check_box_tag("#{fieldname}[blocks_attributes][#{index}][content]", '1', tag.content.present?, :id => nil)
+    content << template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
     form_group :label => {:text => tag.identifier.titleize + "?"} do
       content
     end
@@ -90,7 +92,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
   end
 
   def page_blog_showcase tag, index
-    # no editing experience
+    render_editor tag.edit_path, tag, index
   end
 
   def page_blog_landing tag, index
@@ -160,8 +162,8 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     label = tag.identifier.titleize
 
     form_group :label => {:text => label} do
-      @template.select_tag name,
-        @template.options_for_select(tag.params.insert(0, ''), tag.content), class: 'form-control'
+      template.select_tag name,
+        template.options_for_select(tag.params.insert(0, ''), tag.content), class: 'form-control'
     end
   end
 
@@ -172,13 +174,13 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     label = tag.identifier.titleize
 
     form_group :label => {:text => label} do
-      @template.text_field_tag name, value, class: 'form-control'
+      template.text_field_tag name, value, class: 'form-control'
     end
   end
 
   def object_field_date(tag, index)
     return if tag.blockable.pageable.nil?
-    ObjectFieldDateBuilder.new(self, @template, tag, index).build
+    ObjectFieldDateBuilder.new(self, template, tag, index).build
   end
 
   def collection(tag, index)
@@ -188,28 +190,30 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     end
 
     fieldname = field_name_for(tag)
-    content = @template.select_tag(
+    content = template.select_tag(
       "#{fieldname}[blocks_attributes][#{index}][content]",
-      @template.options_for_select(options, :selected => tag.content),
+      template.options_for_select(options, :selected => tag.content),
       :id => nil
     )
-    content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
+    content << template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
     form_group :label => {:text => tag.identifier.titleize}, :class => tag.class.to_s.demodulize.underscore do
       content
     end
   end
 
-  private
+  def human_attribute_name tag
+    tag.blockable.class.human_attribute_name(tag.identifier.to_s)
+  end
 
-  def render_editor partial, tag, index
-    fieldname = field_name_for(tag)
-    identifier = tag.identifier.to_s
-    label  = tag.blockable.class.human_attribute_name(tag.identifier.to_s)
+  def render_editor path, tag, index
+    fieldname          = field_name_for(tag)
+    identifier         = tag.identifier.to_s
+    label              = human_attribute_name(tag)
     content_field_name = "#{fieldname}[blocks_attributes][#{index}][content]"
-    content = ''
+    content            = ''
 
-    content << @template.render(partial: partial, locals: { comfy_tag: tag, content_field_name: content_field_name, value: tag.content })
-    content << @template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
+    content << template.render(partial: path, locals: { comfy_tag: tag, content_field_name: content_field_name, value: tag.content })
+    content << template.hidden_field_tag("#{fieldname}[blocks_attributes][#{index}][identifier]", tag.identifier, :id => nil)
 
     form_group label: { text: label } do
       content.html_safe
