@@ -155,6 +155,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     # no editor experience
   end
 
+  def page_searchbox(tag, index)
+    # no editor experience
+  end
+
   def object_field_select(tag, index)
     return if tag.blockable.pageable.nil?
     name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}]"
