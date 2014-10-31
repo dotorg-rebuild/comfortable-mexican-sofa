@@ -20,14 +20,17 @@ describe ComfortableMexicanSofa::FormBuilder do
                    has_zone?: has_zone,
                    identifier: identifier,
                    zone: 'Zone',
+                   params: params,
                  })}
+  let(:params) { [] }
+  let(:index) { 1 }
 
 
   let(:field_name_for_expectation) { 'double' }
   let(:human_attribute_name_expectation) { 'Start date' }
 
   describe '#object_field_date' do
-    subject { form.object_field_date(tag, 1) }
+    subject { form.object_field_date(tag, index) }
 
     it do
       is_expected.to include '<select class="form-control" id="double_pageable_attributes_start_date_1i" name="double[pageable_attributes][start_date(1i)]">'
@@ -79,7 +82,7 @@ describe ComfortableMexicanSofa::FormBuilder do
 
   describe '#render_editor' do
     let(:path) { 'some/path' }
-    subject { form.render_editor path, tag, 1 }
+    subject { form.render_editor path, tag, index }
 
     before do
       allow(form).to receive(:field_name_for).and_return(field_name_for_expectation)
@@ -101,6 +104,15 @@ describe ComfortableMexicanSofa::FormBuilder do
     it { is_expected.to eq %{<div class="form-group"><label class="control-label" for="page_">Start date</label>the rendered content hidden field</div>} }
   end
 
+  describe '#object_field_select' do
+    let(:params) { ['Option 1', 'Option 2'] }
+    subject { form.object_field_select tag, index }
+
+    it do
+      is_expected.to include '<option value="Option 1">Option 1</option>'
+      is_expected.to include '<option value="Option 2">Option 2</option>'
+    end
+  end
 
   describe '#field_name_for' do
     subject { form.field_name_for(tag) }

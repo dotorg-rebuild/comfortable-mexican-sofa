@@ -167,7 +167,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
 
     form_group :label => {:text => label} do
       template.select_tag name,
-        template.options_for_select(tag.params.insert(0, ''), tag.content), class: 'form-control'
+        template.options_for_select(tag.params, tag.content), class: 'form-control'
     end
   end
 
