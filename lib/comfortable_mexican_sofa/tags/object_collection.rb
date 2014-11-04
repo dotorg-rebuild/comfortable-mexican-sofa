@@ -8,7 +8,7 @@ class ComfortableMexicanSofa::Tag::ObjectCollection
 
   def render
     return "" if value.blank?
-    html = "<ul>"
+    html = %{<ul class="#{identifier}">}
     value.each do |single_value|
       html += "<li>#{single_value}</li>"
     end
