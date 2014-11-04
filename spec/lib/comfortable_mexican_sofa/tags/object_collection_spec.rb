@@ -50,12 +50,12 @@ describe ComfortableMexicanSofa::Tag::ObjectCollection do
       let(:collection) { [ "Director", "Actor", "Executive Producer" ] }
 
       it "should surround formatted collection in ul tags" do
-        expect(subject).to start_with "<ul>"
+        expect(subject).to start_with %{<ul class="">}
         expect(subject).to end_with "</ul>"
       end
 
       it "should surround formatted collection items in li tags" do
-        expect(subject).to eq "<ul><li>Director</li><li>Actor</li><li>Executive Producer</li></ul>"
+        expect(subject).to eq %{<ul class=""><li>Director</li><li>Actor</li><li>Executive Producer</li></ul>}
       end
     end
   end
