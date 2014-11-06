@@ -48,8 +48,6 @@ class CmsPageTest < ActiveSupport::TestCase
 
   def test_validation_of_slug
     page = comfy_cms_pages(:child)
-    page.slug = 'slug.with.d0ts-and_things'
-    assert page.valid?
 
     page.slug = 'inva lid'
     assert page.invalid?

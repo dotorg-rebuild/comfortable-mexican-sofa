@@ -40,6 +40,7 @@ class Comfy::Cms::Page < ActiveRecord::Base
   validates :label,
     :presence   => true
   validates :slug,
+    :format     => /\A[^.]*\z/,
     :presence   => true,
     :uniqueness => { :scope => :parent_id },
     :unless     => lambda{ |p| p.site && (p.site.pages.count == 0 || p.site.pages.root == self) }

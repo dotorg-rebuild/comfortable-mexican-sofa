@@ -228,4 +228,19 @@ describe Comfy::Cms::Page do
     end
 
   end
+
+  describe 'validates slug is valid url' do
+    let(:page) { build :page, slug: slug }
+    subject { page }
+
+    context 'slug is not a valid url' do
+      let(:slug) { 'hoob.ajoob' }
+      it { is_expected.to_not be_valid }
+    end
+
+    context 'slug is a valid url' do
+      let(:slug) { 'hoob-ajoob' }
+      it { is_expected.to be_valid }
+    end
+  end
 end
