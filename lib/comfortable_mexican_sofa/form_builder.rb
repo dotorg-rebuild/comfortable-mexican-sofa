@@ -76,7 +76,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
   end
 
   def page_carousel tag, index
-    render_editor 'widget/carousel/editor', tag, index
+    render_editor tag.class.edit_path, tag, index
   end
 
   def page_scroller tag, index
