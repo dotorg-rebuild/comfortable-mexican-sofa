@@ -192,6 +192,10 @@ class Comfy::Cms::Page < ActiveRecord::Base
     pageable.attributes = hash
   end
 
+  def site_base_url
+    'http://' + site.hostname + '/'
+  end
+
 protected
 
   def assigns_label
