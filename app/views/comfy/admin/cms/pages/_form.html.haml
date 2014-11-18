@@ -42,6 +42,9 @@
 = form.form_group :publish_at do
   = form.datetime_select :publish_at, :label => t('.publish_at'), :ampm => true, :include_blank => true
 
+= form.form_group :indexed do
+  = form.check_box :indexed, :label => t('.indexed')
+
 = render 'comfy/admin/cms/partials/page_form_after', :object => form
 
 = form.form_group :class => 'form-actions' do
