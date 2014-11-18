@@ -54,6 +54,7 @@ class CreateCms < ActiveRecord::Migration
       t.integer  :children_count,  :null => false, :default => 0
       t.boolean  :is_published,    :null => false, :default => true
       t.datetime :publish_at,      :default => Date.new
+      t.boolean  :indexed,         :default => true
       t.boolean  :is_shared,       :null => false, :default => false
       t.boolean  :is_blog,         :null => false, :default => false
       t.boolean  :is_blog_post,    :null => false, :default => false
