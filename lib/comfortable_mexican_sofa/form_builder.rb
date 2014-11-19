@@ -107,6 +107,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     render_editor tag.edit_path, tag, index
   end
 
+  def page_artist_scroller(tag, index)
+    render_editor tag.edit_path, tag, index
+  end
+
   def page_events(tag, index)
     render_editor tag.edit_path, tag, index
   end
