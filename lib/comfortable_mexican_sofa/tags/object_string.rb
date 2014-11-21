@@ -7,6 +7,7 @@ class ComfortableMexicanSofa::Tag::ObjectString
   end
 
   def content
+    return unless blockable.pageable.respond_to?(identifier)
     blockable.pageable.send(identifier).to_s
   end
 end
