@@ -25,5 +25,4 @@ group :test do
   gem 'timecop'
   gem 'pry'
   gem 'pry-nav'
-  gem 'timecop'
 end

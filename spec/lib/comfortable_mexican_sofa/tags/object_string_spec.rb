@@ -1,16 +1,17 @@
 require 'spec_helper'
 
-describe ComfortableMexicanSofa::Tag::ObjectCollection do
-  let(:tag) { ComfortableMexicanSofa::Tag::ObjectCollection.new }
+describe ComfortableMexicanSofa::Tag::ObjectString do
+  let(:tag) { ComfortableMexicanSofa::Tag::ObjectString.new }
+  let(:pageable) { double :pageable, methodname: pageable_string }
+  let(:presenter) { double :presenter, methodname: presented_string }
   let(:blockable) { double :page, pageable: pageable }
-  let(:pageable) { double :pageable, methodname: pageable_collection }
-  let(:presenter) { double :presenter, methodname: presented_collection }
-  let(:pageable_collection) { [] }
-  let(:presented_collection) { [] }
+  let(:pageable_string) { 'pageable string' }
+  let(:presented_string) { 'presenter string' }
   let(:identifier) { :methodname }
 
-  describe '#value' do
-    subject{ tag.value }
+
+  describe '#content' do
+    subject{ tag.content }
 
     before do
       allow(tag).to receive(:blockable).and_return blockable
@@ -27,8 +28,8 @@ describe ComfortableMexicanSofa::Tag::ObjectCollection do
     end
 
     context "identifier is a method on pageable" do
-      it 'should return the collection' do
-        expect(subject).to eq presented_collection
+      it 'should return the string' do
+        expect(subject).to eq presented_string
       end
     end
   end
@@ -54,35 +55,6 @@ describe ComfortableMexicanSofa::Tag::ObjectCollection do
     context 'when pageable_type presenter does NOT exist' do
       it 'should return pageable' do
         expect(subject).to eq nil
-      end
-    end
-  end
-
-  describe '#render' do
-    before do
-      allow(tag).to receive(:value).and_return(collection)
-    end
-
-    subject{ tag.render }
-
-    context 'value returns an empty collection' do
-      let(:collection) { [] }
-
-      it "should return empty string" do
-        expect(subject).to eq ""
-      end
-    end
-
-    context 'value returns a populated collection' do
-      let(:collection) { [ "Director", "Actor", "Executive Producer" ] }
-
-      it "should surround formatted collection in ul tags" do
-        expect(subject).to start_with %{<ul class="">}
-        expect(subject).to end_with "</ul>"
-      end
-
-      it "should surround formatted collection items in li tags" do
-        expect(subject).to eq %{<ul class=""><li>Director</li><li>Actor</li><li>Executive Producer</li></ul>}
       end
     end
   end
