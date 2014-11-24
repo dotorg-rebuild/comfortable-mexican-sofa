@@ -179,6 +179,10 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     end
   end
 
+  def object_field_rich_text(tag, index)
+    default_tag_field(tag, index, :text_area_tag, :data => {'cms-rich-text' => true})
+  end
+
   def object_field_string(tag, index)
     return if tag.blockable.pageable.nil?
     name = "#{field_name_for(tag)}[pageable_attributes][#{tag.identifier}]"
