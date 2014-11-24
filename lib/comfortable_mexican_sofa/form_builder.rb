@@ -75,10 +75,6 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     # no editing experience
   end
 
-  def page_carousel tag, index
-    render_editor tag.class.edit_path, tag, index
-  end
-
   def page_scroller tag, index
     render_editor 'widget/scroller/editor', tag, index
   end
@@ -91,23 +87,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     render_editor tag.edit_path, tag, index
   end
 
-  def page_blog_showcase tag, index
-    render_editor tag.edit_path, tag, index
-  end
-
-  def page_blog_landing tag, index
-    # no editing experience
-  end
-
   def page_accordion tag, index
-    render_editor tag.edit_path, tag, index
-  end
-
-  def page_news_and_stories(tag, index)
-    render_editor tag.edit_path, tag, index
-  end
-
-  def page_artist_scroller(tag, index)
     render_editor tag.edit_path, tag, index
   end
 
@@ -155,15 +135,7 @@ class ComfortableMexicanSofa::FormBuilder < BootstrapForm::FormBuilder
     default_tag_field(tag, index, :text_area_tag, :data => {'cms-cm-mode' => 'text/x-markdown'})
   end
 
-  def page_event_grid(tag, index)
-    # no editor experience
-  end
-
   def object_string(tag, index)
-    # no editor experience
-  end
-
-  def page_searchbox(tag, index)
     # no editor experience
   end
 
