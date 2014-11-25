@@ -160,6 +160,10 @@ class Comfy::Cms::Page < ActiveRecord::Base
     blocks.find_or_create_by(identifier: name).update_attributes(content: value)
   end
 
+  def read_page_files name
+    blocks.find_by(identifier: name).try(:files).try(:map, &:file)
+  end
+
   def read_page_file name
     blocks.find_by(identifier: name).try_chain(:files, :first, :file)
   end

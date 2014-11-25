@@ -7,6 +7,26 @@ class ComfortableMexicanSofa::Tag::ObjectString
   end
 
   def content
-    blockable.pageable.send(identifier).to_s
+    if presenter.respond_to?(identifier)
+      presenter.send(identifier, pageable).to_s
+    elsif pageable.respond_to?(identifier)
+      pageable.send(identifier).to_s
+    end
+  end
+
+  def pageable
+    blockable.pageable
+  end
+
+  def presenter
+    begin
+      presenter_name.constantize
+    rescue NameError
+      nil
+    end
+  end
+
+  def presenter_name
+    "#{pageable.class.to_s}Presenter"
   end
 end

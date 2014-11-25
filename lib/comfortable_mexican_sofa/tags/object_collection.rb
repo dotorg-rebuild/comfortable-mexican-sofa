@@ -16,7 +16,26 @@ class ComfortableMexicanSofa::Tag::ObjectCollection
   end
 
   def value
-    return nil unless blockable.pageable.respond_to?(identifier)
-    blockable.pageable.send(identifier)
+    if presenter.respond_to?(identifier)
+      presenter.send(identifier, pageable)
+    elsif pageable.respond_to?(identifier)
+      pageable.send(identifier)
+    end
+  end
+
+  def pageable
+    blockable.pageable
+  end
+
+  def presenter
+    begin
+      presenter_name.constantize
+    rescue NameError
+      nil
+    end
+  end
+
+  def presenter_name
+    "#{pageable.class.to_s}Presenter"
   end
 end

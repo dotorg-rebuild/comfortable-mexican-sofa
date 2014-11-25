@@ -81,6 +81,18 @@ describe Comfy::Cms::Page do
     it { is_expected.to eq comfy_file.file.url }
   end
 
+  describe '#read_page_files' do
+    let(:page) { create :page }
+    let(:comfy_file1) { create :image_file }
+    let(:comfy_file2) { create :image_file }
+
+    before do
+      page.blocks.create! identifier: 'manamana', files: [comfy_file1, comfy_file2]
+    end
+    subject { page.read_page_files('manamana').map(&:url) }
+    it { is_expected.to eq [comfy_file1.file.url, comfy_file2.file.url] }
+  end
+
   describe '#append_page_file!' do
     let(:page) { create :page }
     let(:file) { File.new(Rails.root.join('app/assets/images/comfortable_mexican_sofa/checkerboard.gif')) }
